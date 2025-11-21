@@ -113,11 +113,28 @@
             align-items: center;
         }
         
+        .admin-user {
+            display: flex;
+            align-items: center;
+        }
+        
         .admin-user img {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .user-email {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 3px;
         }
         
         .logout-btn {
@@ -424,10 +441,13 @@
                 </div>
                 <div class="admin-title">Panel de Control</div>
                 <div class="admin-user">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=3498db&color=fff" alt="Admin">
-                    <button class="logout-btn" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                    </button>
+                    <img src="https://ui-avatars.com/api/?name=Cristian+Benegas&background=3498db&color=fff" alt="Admin">
+                    <div class="user-info">
+                        <div class="user-email">cristianbenegas137@gmail.com</div>
+                        <button class="logout-btn" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </button>
+                    </div>
                 </div>
             </div>
             
