@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Panel de Administración</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .admin-logo {
+            margin-bottom: 30px;
+        }
+        
+        .admin-logo i {
+            font-size: 50px;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .admin-login-container h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .admin-form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .admin-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .admin-form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .admin-form-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .admin-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .admin-submit:hover {
+            background-color: #2980b9;
+        }
+        
+        .admin-error {
+            color: #e74c3c;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .back-to-home {
+            display: inline-block;
+            margin-top: 20px;
+            color: #7f8c8d;
+            text-decoration: none;
+        }
+        
+        .back-to-home:hover {
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="admin-logo">
+            <i class="fas fa-user-shield"></i>
+            <h1>Panel de Administración</h1>
+        </div>
+        
+        <form id="adminLoginForm">
+            <div class="admin-form-group">
+                <label for="admin-username">Usuario</label>
+                <input type="text" id="admin-username" required>
+            </div>
+            
+            <div class="admin-form-group">
+                <label for="admin-password">Contraseña</label>
+                <input type="password" id="admin-password" required>
+            </div>
+            
+            <button type="submit" class="admin-submit">Iniciar Sesión</button>
+            <div id="loginError" class="admin-error">Usuario o contraseña incorrectos</div>
+        </form>
+        
+        <a href="index.html" class="back-to-home">
+            <i class="fas fa-arrow-left"></i> Volver al sitio principal
+        </a>
+    </div>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            // Credenciales de administrador (en un entorno real, esto estaría en el servidor con autenticación segura)
+            const ADMIN_USERNAME = 'admin';
+            const ADMIN_PASSWORD = 'AdminOrbitech2025!'; // Contraseña segura
+            
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                // Guardar en sessionStorage que el usuario ha iniciado sesión
+                sessionStorage.setItem('adminAuthenticated', 'true');
+                // Redirigir al panel de administración
+                window.location.href = 'admin-panel.html';
+            } else {
+                // Mostrar mensaje de error
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
