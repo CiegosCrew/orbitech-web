@@ -32,12 +32,12 @@
         <span class="close-modal">&times;</span>
         
         <div class="auth-tabs">
-            <button class="tab-btn active" data-tab="login">Iniciar Sesión</button>
-            <button class="tab-btn" data-tab="register">Registrarse</button>
+            <button id="login-tab" class="tab-btn active" data-tab="login">Iniciar Sesión</button>
+            <button id="register-tab" class="tab-btn" data-tab="register">Registrarse</button>
         </div>
         
         <!-- Formulario de Inicio de Sesión -->
-        <form id="loginForm" class="auth-form active">
+        <form id="login-form" class="auth-form active">
             <h3>Bienvenido de nuevo</h3>
             <div class="form-group">
                 <label for="login-email">Correo electrónico</label>
@@ -68,7 +68,7 @@
         </form>
         
         <!-- Formulario de Registro -->
-        <form id="registerForm" class="auth-form">
+        <form id="register-form" class="auth-form">
             <h3>Crea tu cuenta</h3>
             <div class="form-group">
                 <label for="register-name">Nombre completo</label>
