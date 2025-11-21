@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orbitech</title>
+    <title>Orbitech - Tienda de Tecnología</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,38 +13,133 @@
     <div class="logo">Orbitech</div>
     <nav>
         <a href="#inicio">Inicio</a>
-        <a href="#servicios">Servicios</a>
+        <a href="#productos">Productos</a>
+        <a href="#categorias">Categorías</a>
+        <a href="#ofertas">Ofertas</a>
         <a href="#contacto">Contacto</a>
+        <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span class="cart-count">0</span></a>
     </nav>
 </header>
 
 <section class="hero" id="inicio">
-    <h1>Innovación clara y precisa</h1>
-    <p>Tecnología minimalista, moderna y profesional.</p>
-    <a class="btn" href="#servicios">Explorar</a>
-</section>
-
-<section class="servicios" id="servicios">
-    <h2>Servicios</h2>
-    <div class="grid">
-        <div class="card">
-            <h3>Desarrollo Web</h3>
-            <p>Diseños limpios, rápidos y elegantes.</p>
-        </div>
-        <div class="card">
-            <h3>Automatización</h3>
-            <p>Procesos que trabajan por vos.</p>
-        </div>
-        <div class="card">
-            <h3>Optimización</h3>
-            <p>Mejoramos velocidad y rendimiento.</p>
+    <div class="hero-content">
+        <h1>Tecnología al mejor precio</h1>
+        <p>Descubre las últimas novedades en dispositivos y accesorios tecnológicos</p>
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar productos...">
+            <button><i class="fas fa-search"></i></button>
         </div>
     </div>
 </section>
 
+<section class="destacados" id="productos">
+    <h2>Productos Destacados</h2>
+    <div class="product-grid">
+        <div class="product-card">
+            <div class="product-badge">Nuevo</div>
+            <img src="https://via.placeholder.com/300x200" alt="Laptop Gamer">
+            <h3>Laptop Gamer Pro</h3>
+            <p class="price">$1,299.99</p>
+            <p class="description">Potente laptop para gaming con tarjeta gráfica RTX 3070</p>
+            <button class="add-to-cart">Añadir al carrito</button>
+        </div>
+        
+        <div class="product-card">
+            <div class="product-badge">Oferta</div>
+            <img src="https://via.placeholder.com/300x200" alt="Smartphone">
+            <h3>Smartphone X1</h3>
+            <p class="price"><span class="old-price">$899.99</span> $749.99</p>
+            <p class="description">Último modelo con cámara de 108MP y pantalla AMOLED</p>
+            <button class="add-to-cart">Añadir al carrito</button>
+        </div>
+        
+        <div class="product-card">
+            <img src="https://via.placeholder.com/300x200" alt="Auriculares">
+            <h3>Auriculares Inalámbricos</h3>
+            <p class="price">$199.99</p>
+            <p class="description">Cancelación activa de ruido y 30h de duración</p>
+            <button class="add-to-cart">Añadir al carrito</button>
+        </div>
+    </div>
+</section>
+
+<section class="categorias" id="categorias">
+    <h2>Categorías</h2>
+    <div class="category-grid">
+        <div class="category-card">
+            <i class="fas fa-laptop"></i>
+            <h3>Laptops</h3>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>Smartphones</h3>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-headphones"></i>
+            <h3>Audio</h3>
+        </div>
+        <div class="category-card">
+            <i class="fas fa-gamepad"></i>
+            <h3>Gaming</h3>
+        </div>
+    </div>
+</section>
+
+<section class="ofertas" id="ofertas">
+    <div class="ofertas-header">
+        <h2>Ofertas Especiales</h2>
+        <a href="#" class="ver-todo">Ver todo</a>
+    </div>
+    <div class="ofertas-grid">
+        <div class="oferta-card">
+            <div class="discount-badge">-20%</div>
+            <img src="https://via.placeholder.com/200x150" alt="Tablet">
+            <h3>Tablet Pro 10"</h3>
+            <p class="price"><span class="old-price">$299.99</span> $239.99</p>
+            <button class="btn-oferta">Ver oferta</button>
+        </div>
+        <!-- Más ofertas pueden ir aquí -->
+    </div>
+</section>
+
 <footer id="contacto">
-    <p>© 2025 Orbitech — Creado por CiegosCrew</p>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Sobre Nosotros</h3>
+            <p>Tu tienda de confianza en tecnología desde 2020. Ofrecemos los mejores productos al mejor precio.</p>
+        </div>
+        <div class="footer-section">
+            <h3>Contacto</h3>
+            <p><i class="fas fa-envelope"></i> info@orbitech.com</p>
+            <p><i class="fas fa-phone"></i> +1 234 567 890</p>
+        </div>
+        <div class="footer-section">
+            <h3>Síguenos</h3>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Orbitech - Todos los derechos reservados</p>
+    </div>
 </footer>
+
+<div class="cart-sidebar">
+    <div class="cart-header">
+        <h3>Carrito de Compras</h3>
+        <button class="close-cart">&times;</button>
+    </div>
+    <div class="cart-items">
+        <!-- Los productos del carrito se agregarán aquí dinámicamente -->
+    </div>
+    <div class="cart-total">
+        <p>Total: <span>$0.00</span></p>
+        <button class="checkout-btn">Pagar</button>
+    </div>
+</div>
 
 <script src="script.js"></script>
 </body>
