@@ -1,4 +1,56 @@
 // ====================
+// SISTEMA DE TEMA (CLARO / OSCURO)
+// ====================
+
+function getStoredTheme() {
+    try {
+        return localStorage.getItem('orbitech-theme');
+    } catch (e) {
+        return null;
+    }
+}
+
+function storeTheme(theme) {
+    try {
+        localStorage.setItem('orbitech-theme', theme);
+    } catch (e) {
+        // Ignorar errores de almacenamiento
+    }
+}
+
+function applyTheme(theme) {
+    const root = document.documentElement;
+    const normalized = theme === 'dark' ? 'dark' : 'light';
+    root.setAttribute('data-theme', normalized === 'dark' ? 'dark' : 'light');
+}
+
+function initTheme() {
+    const stored = getStoredTheme();
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = stored || (prefersDark ? 'dark' : 'light');
+    applyTheme(initialTheme);
+
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        const icon = themeToggle.querySelector('i');
+        const setIcon = (theme) => {
+            if (!icon) return;
+            icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        };
+
+        setIcon(initialTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            storeTheme(next);
+            setIcon(next);
+        });
+    }
+}
+
+// ====================
 // SISTEMA DE AUTENTICACIÓN
 // ====================
 
@@ -403,8 +455,9 @@ function showNotification(message, type = 'info') {
 // ====================
 // ====================
 
-// Inicializar sistema de autenticación y carrito cuando el DOM esté listo
+// Inicializar sistema de tema, autenticación, catálogo y carrito cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initAuth();
     restoreAuthState();
     initCatalog();

@@ -24,6 +24,21 @@
             --light-gray: #f5f6fa;
         }
 
+        [data-theme="dark"] {
+            --primary-color: #60a5fa;
+            --primary-hover: #3b82f6;
+            --danger-color: #f97373;
+            --success-color: #22c55e;
+            --warning-color: #fbbf24;
+            --info-color: #a855f7;
+            --text-color: #e5e7eb;
+            --muted-text: #9ca3af;
+            --card-bg: #020617;
+            --body-bg: #020617;
+            --border-color: #1f2937;
+            --light-gray: #0b1120;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -903,9 +918,13 @@
         </div>
     </div>
 
+    <script src="script.js"></script>
     <script>
-        // Verificar autenticación
+        // Verificar autenticación y aplicar tema
         document.addEventListener('DOMContentLoaded', function() {
+            if (typeof initTheme === 'function') {
+                initTheme();
+            }
             // Verificar si el usuario está autenticado
             if (!sessionStorage.getItem('adminAuthenticated')) {
                 window.location.href = 'admin-login.html';
