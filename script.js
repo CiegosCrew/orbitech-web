@@ -494,7 +494,7 @@ function initCatalog() {
             card.className = 'product-card';
             card.dataset.id = product.id;
             card.innerHTML = `
-                <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x250?text=Sin+imagen'">
+                <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.style.display='none';">
                 <h3>${product.name}</h3>
                 <p class="description">${product.description}</p>
                 <p class="price" data-price="${product.price}">$${product.price.toFixed(2)}</p>
@@ -514,7 +514,7 @@ function initCatalog() {
             card.dataset.id = offer.id;
             card.innerHTML = `
                 <span class="discount-badge">${offer.discountLabel}</span>
-                <img src="${offer.image}" alt="${offer.name}" onerror="this.src='https://via.placeholder.com/400x200?text=Sin+imagen'">
+                <img src="${offer.image}" alt="${offer.name}" onerror="this.onerror=null; this.style.display='none';">
                 <h3>${offer.name}</h3>
                 <p class="price" data-price="${offer.price}">$${offer.price.toFixed(2)}</p>
                 <button class="btn-oferta">Añadir al carrito</button>
@@ -665,7 +665,7 @@ function initCart() {
             const cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
             cartItem.innerHTML = `
-                <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80?text=Imagen+no+disponible'">
+                <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null; this.style.display='none';">
                 <div class="item-details">
                     <h4>${item.name}</h4>
                     <span class="item-price">$${item.price.toFixed(2)}</span>
