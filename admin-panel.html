@@ -321,7 +321,7 @@
 
         .dashboard-layout {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) 320px;
+            grid-template-columns: minmax(0, 1fr);
             gap: 24px;
         }
 
@@ -575,13 +575,6 @@
                     </div>
                 </div>
                 <div class="quick-action">
-                    <i class="fas fa-user-check"></i>
-                    <div>
-                        <h4>Clientes VIP</h4>
-                        <span>Identifica oportunidades de fidelización</span>
-                    </div>
-                </div>
-                <div class="quick-action">
                     <i class="fas fa-bullhorn"></i>
                     <div>
                         <h4>Campaña Express</h4>
@@ -598,9 +591,9 @@
                                 <div>Ventas Totales</div>
                                 <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
                             </div>
-                            <div class="card-value">$24,780</div>
+                            <div class="card-value">$0.00</div>
                             <div class="card-stats">
-                                <span class="text-success">+12%</span> respecto al mes pasado
+                                <span class="text-success">0%</span> sin cambios
                             </div>
                         </div>
                         <div class="card success">
@@ -608,9 +601,9 @@
                                 <div>Pedidos</div>
                                 <div class="card-icon"><i class="fas fa-shopping-bag"></i></div>
                             </div>
-                            <div class="card-value">1,245</div>
+                            <div class="card-value">0</div>
                             <div class="card-stats">
-                                <span class="text-success">+8%</span> respecto al mes pasado
+                                <span class="text-success">0%</span> sin cambios
                             </div>
                         </div>
                         <div class="card warning">
@@ -618,9 +611,9 @@
                                 <div>Clientes</div>
                                 <div class="card-icon"><i class="fas fa-users"></i></div>
                             </div>
-                            <div class="card-value">845</div>
+                            <div class="card-value">0</div>
                             <div class="card-stats">
-                                <span class="text-success">+5%</span> nuevos clientes
+                                <span class="text-success">0%</span> sin cambios
                             </div>
                         </div>
                         <div class="card danger">
@@ -628,9 +621,9 @@
                                 <div>Stock Crítico</div>
                                 <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
                             </div>
-                            <div class="card-value">27 ítems</div>
+                            <div class="card-value">0 ítems</div>
                             <div class="card-stats">
-                                Productos requieren reposición inmediata
+                                Sin alertas
                             </div>
                         </div>
                     </div>
@@ -647,34 +640,34 @@
                             <div class="mini-card">
                                 <h5>Tasa de Conversión</h5>
                                 <div class="progress-wrapper">
-                                    <span>4.2%</span>
-                                    <small class="text-success">+0.8%</small>
+                                    <span>0%</span>
+                                    <small class="text-success">0%</small>
                                 </div>
-                                <div class="progress-bar"><div style="width: 68%"></div></div>
+                                <div class="progress-bar"><div style="width: 0%"></div></div>
                             </div>
                             <div class="mini-card">
                                 <h5>Ticket Promedio</h5>
                                 <div class="progress-wrapper">
-                                    <span>$89.60</span>
-                                    <small class="text-success">+5.1%</small>
+                                    <span>$0.00</span>
+                                    <small class="text-success">0%</small>
                                 </div>
-                                <div class="progress-bar"><div style="width: 74%"></div></div>
+                                <div class="progress-bar"><div style="width: 0%"></div></div>
                             </div>
                             <div class="mini-card">
                                 <h5>Frecuencia de Compra</h5>
                                 <div class="progress-wrapper">
-                                    <span>2.1 veces</span>
-                                    <small class="text-success">+0.3</small>
+                                    <span>0</span>
+                                    <small class="text-success">0</small>
                                 </div>
-                                <div class="progress-bar"><div style="width: 58%"></div></div>
+                                <div class="progress-bar"><div style="width: 0%"></div></div>
                             </div>
                             <div class="mini-card">
                                 <h5>Clientes Recurrentes</h5>
                                 <div class="progress-wrapper">
-                                    <span>63%</span>
-                                    <small class="text-success">+4%</small>
+                                    <span>0%</span>
+                                    <small class="text-success">0%</small>
                                 </div>
-                                <div class="progress-bar"><div style="width: 63%"></div></div>
+                                <div class="progress-bar"><div style="width: 0%"></div></div>
                             </div>
                         </div>
                     </div>
@@ -698,37 +691,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>#ORD-1001</td>
-                                        <td>Juan Pérez</td>
-                                        <td>3</td>
-                                        <td>$1,245.00</td>
-                                        <td><span class="status status-pending">Pendiente</span></td>
-                                        <td>
-                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#ORD-1000</td>
-                                        <td>María González</td>
-                                        <td>2</td>
-                                        <td>$845.50</td>
-                                        <td><span class="status status-completed">Completado</span></td>
-                                        <td>
-                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#ORD-999</td>
-                                        <td>Carlos López</td>
-                                        <td>1</td>
-                                        <td>$450.00</td>
-                                        <td><span class="status status-cancelled">Cancelado</span></td>
-                                        <td>
-                                            <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                                            <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                        </td>
+                                        <td colspan="6" style="text-align:center;color:var(--muted-text);padding:16px;">Sin datos disponibles</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -736,85 +699,7 @@
                     </div>
                 </div>
 
-                <aside class="dashboard-aside">
-                    <div class="admin-section">
-                        <div class="section-header">
-                            <h3 class="section-title">Actividad Reciente</h3>
-                        </div>
-                        <ul class="timeline">
-                            <li class="timeline-item">
-                                <div class="timeline-icon"><i class="fas fa-box"></i></div>
-                                <div class="timeline-content">
-                                    <h4>Ingreso de inventario</h4>
-                                    <span>Hace 12 minutos • 120 unidades Headset Pro</span>
-                                </div>
-                            </li>
-                            <li class="timeline-item">
-                                <div class="timeline-icon"><i class="fas fa-user-plus"></i></div>
-                                <div class="timeline-content">
-                                    <h4>Cliente VIP agregado</h4>
-                                    <span>Hace 45 minutos • Ana Ramírez</span>
-                                </div>
-                            </li>
-                            <li class="timeline-item">
-                                <div class="timeline-icon"><i class="fas fa-bullhorn"></i></div>
-                                <div class="timeline-content">
-                                    <h4>Campaña “Viernes Tech”</h4>
-                                    <span>Hace 2 horas • Descuento 25% en accesorios</span>
-                                </div>
-                            </li>
-                            <li class="timeline-item">
-                                <div class="timeline-icon"><i class="fas fa-exclamation-circle"></i></div>
-                                <div class="timeline-content">
-                                    <h4>Alerta de stock bajo</h4>
-                                    <span>Hace 4 horas • Drones Orbitech X2</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="admin-section">
-                        <div class="section-header">
-                            <h3 class="section-title">Tendencias del Mes</h3>
-                        </div>
-                        <div class="trend-item">
-                            <div class="trend-label"><span class="trend-dot" style="background:#2ecc71;"></span>Laptops profesionales</div>
-                            <div class="trend-value">+18%</div>
-                        </div>
-                        <div class="trend-item">
-                            <div class="trend-label"><span class="trend-dot" style="background:#3498db;"></span>Accesorios gaming</div>
-                            <div class="trend-value">+12%</div>
-                        </div>
-                        <div class="trend-item">
-                            <div class="trend-label"><span class="trend-dot" style="background:#f39c12;"></span>Smart home</div>
-                            <div class="trend-value">+7%</div>
-                        </div>
-                        <div class="trend-item">
-                            <div class="trend-label"><span class="trend-dot" style="background:#e74c3c;"></span>Drones y movilidad</div>
-                            <div class="trend-value">-4%</div>
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <div class="section-header">
-                            <h3 class="section-title">Estado del Sistema</h3>
-                        </div>
-                        <div class="system-health">
-                            <div class="health-card">
-                                <strong>API Principal</strong>
-                                <span>Operativa (99.9% uptime)</span>
-                            </div>
-                            <div class="health-card">
-                                <strong>Firewall</strong>
-                                <span>Sin incidentes registrados</span>
-                            </div>
-                            <div class="health-card">
-                                <strong>Backups</strong>
-                                <span>Último backup hace 3 horas</span>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
+                
             </div>
 
             </div>
@@ -843,40 +728,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>#PROD-001</td>
-                                    <td><img src="https://via.placeholder.com/40" alt="Producto" style="width:40px;height:40px;border-radius:6px;object-fit:cover;"></td>
-                                    <td>Laptop Gamer Pro</td>
-                                    <td>Laptops</td>
-                                    <td>$1,299.99</td>
-                                    <td>15</td>
-                                    <td>
-                                        <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                                        <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#PROD-002</td>
-                                    <td><img src="https://via.placeholder.com/40" alt="Producto" style="width:40px;height:40px;border-radius:6px;object-fit:cover;"></td>
-                                    <td>Teclado Mecánico RGB</td>
-                                    <td>Periféricos</td>
-                                    <td>$129.00</td>
-                                    <td>8</td>
-                                    <td>
-                                        <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                                        <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#PROD-003</td>
-                                    <td><img src="https://via.placeholder.com/40" alt="Producto" style="width:40px;height:40px;border-radius:6px;object-fit:cover;"></td>
-                                    <td>Monitor 4K UltraView</td>
-                                    <td>Monitores</td>
-                                    <td>$499.99</td>
-                                    <td>0</td>
-                                    <td>
-                                        <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
-                                        <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
-                                    </td>
+                                    <td colspan="7" style="text-align:center;color:var(--muted-text);padding:16px;">Sin datos disponibles</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -914,26 +766,26 @@
                         <div class="mini-card">
                             <h5>Usuarios activos</h5>
                             <div class="progress-wrapper">
-                                <span>1,980</span>
-                                <small class="text-success">+6%</small>
+                                <span>0</span>
+                                <small class="text-success">0%</small>
                             </div>
-                            <div class="progress-bar"><div style="width:76%"></div></div>
+                            <div class="progress-bar"><div style="width:0%"></div></div>
                         </div>
                         <div class="mini-card">
                             <h5>Nuevos registros</h5>
                             <div class="progress-wrapper">
-                                <span>145</span>
-                                <small class="text-success">+3%</small>
+                                <span>0</span>
+                                <small class="text-success">0%</small>
                             </div>
-                            <div class="progress-bar"><div style="width:52%"></div></div>
+                            <div class="progress-bar"><div style="width:0%"></div></div>
                         </div>
                         <div class="mini-card">
                             <h5>Usuarios inactivos</h5>
                             <div class="progress-wrapper">
-                                <span>210</span>
-                                <small style="color:#e74c3c;">-2%</small>
+                                <span>0</span>
+                                <small class="text-success">0%</small>
                             </div>
-                            <div class="progress-bar"><div style="width:34%;background:#e74c3c"></div></div>
+                            <div class="progress-bar"><div style="width:0%"></div></div>
                         </div>
                     </div>
                 </div>
