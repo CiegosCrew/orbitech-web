@@ -2,6 +2,13 @@
 // SISTEMA DE AUTENTICACIÓN
 // ====================
 
+// Credenciales del administrador
+const ADMIN_CREDENTIALS = {
+    email: 'cristianbenegas137@gmail.com',
+    password: 'AdminOrbitech2025!',
+    name: 'Administrador'
+};
+
 // Elementos del DOM del sistema de autenticación
 const authModal = document.querySelector('.auth-modal');
 const authContent = document.querySelector('.auth-content');
@@ -129,14 +136,26 @@ function handleLogin(e) {
         showNotification('Por favor, completa todos los campos', 'error');
         return;
     }
-    
-    // Aquí iría la lógica de autenticación con el servidor
-    // Por ahora, solo mostramos un mensaje de éxito
+
+    const isAdmin = email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password;
+
+    if (!isAdmin) {
+        showNotification('Correo o contraseña incorrectos', 'error');
+        return;
+    }
+
+    const user = {
+        name: ADMIN_CREDENTIALS.name,
+        email: ADMIN_CREDENTIALS.email,
+        isAdmin: true
+    };
+
+    sessionStorage.setItem('adminAuthenticated', 'true');
+    sessionStorage.setItem('authUser', JSON.stringify(user));
+
     showNotification('Inicio de sesión exitoso', 'success');
     closeAuthModal();
-    
-    // Actualizar UI para usuario autenticado
-    updateAuthUI(true);
+    updateAuthUI(true, user);
 }
 
 // Manejar registro
@@ -183,20 +202,24 @@ function handleRegister(e) {
 }
 
 // Actualizar la interfaz según el estado de autenticación
-function updateAuthUI(isAuthenticated) {
+function updateAuthUI(isAuthenticated, user = {}) {
     const authButtons = document.querySelector('.auth-buttons');
-    
+    if (!authButtons) return;
+
+    const existingUserMenu = document.querySelector('.user-menu');
+    if (existingUserMenu) {
+        existingUserMenu.remove();
+    }
+
     if (isAuthenticated) {
-        // Ocultar botones de autenticación
         authButtons.style.display = 'none';
-        
-        // Crear menú de usuario
+
         const userMenu = document.createElement('div');
         userMenu.className = 'user-menu';
         userMenu.innerHTML = `
             <button class="user-btn">
                 <i class="fas fa-user-circle"></i>
-                <span>Mi Cuenta</span>
+                <span>${user.name || 'Mi Cuenta'}</span>
                 <i class="fas fa-chevron-down"></i>
             </button>
             <div class="dropdown-menu">
@@ -205,26 +228,23 @@ function updateAuthUI(isAuthenticated) {
                 <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>
         `;
-        
+
         authButtons.parentNode.insertBefore(userMenu, authButtons);
-        
-        // Event listener para el menú desplegable
+
         const userBtn = userMenu.querySelector('.user-btn');
         const dropdownMenu = userMenu.querySelector('.dropdown-menu');
-        
+
         userBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             dropdownMenu.classList.toggle('show');
         });
-        
-        // Cerrar menú al hacer clic fuera
+
         document.addEventListener('click', (e) => {
             if (!userMenu.contains(e.target)) {
                 dropdownMenu.classList.remove('show');
             }
         });
-        
-        // Cerrar sesión
+
         const logoutBtn = userMenu.querySelector('#logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', (e) => {
@@ -232,23 +252,72 @@ function updateAuthUI(isAuthenticated) {
                 handleLogout();
             });
         }
-    } else {
-        // Mostrar botones de autenticación
-        authButtons.style.display = 'flex';
-        
-        // Eliminar menú de usuario si existe
-        const userMenu = document.querySelector('.user-menu');
-        if (userMenu) {
-            userMenu.remove();
+
+        if (user.isAdmin) {
+            ensureAdminLink();
         }
+    } else {
+        authButtons.style.display = 'flex';
+        removeAdminLink();
+    }
+}
+
+function ensureAdminLink() {
+    if (document.querySelector('.admin-nav-link')) return;
+
+    const nav = document.querySelector('nav');
+    if (!nav) return;
+
+    const adminLink = document.createElement('a');
+    adminLink.href = 'admin-panel.html';
+    adminLink.className = 'admin-nav-link';
+    adminLink.innerHTML = '<i class="fas fa-shield-alt"></i> Admin';
+
+    const cartIcon = nav.querySelector('.cart-icon');
+    if (cartIcon) {
+        nav.insertBefore(adminLink, cartIcon);
+    } else {
+        nav.appendChild(adminLink);
+    }
+}
+
+function removeAdminLink() {
+    const adminLink = document.querySelector('.admin-nav-link');
+    if (adminLink) {
+        adminLink.remove();
     }
 }
 
 // Cerrar sesión
 function handleLogout() {
-    // Aquí iría la lógica de cierre de sesión con el servidor
+    sessionStorage.removeItem('adminAuthenticated');
+    sessionStorage.removeItem('authUser');
+
     showNotification('Sesión cerrada correctamente', 'success');
     updateAuthUI(false);
+
+    if (window.location.pathname.includes('admin-panel.html')) {
+        window.location.href = 'index.html';
+    }
+}
+
+function restoreAuthState() {
+    const storedUser = sessionStorage.getItem('authUser');
+    if (!storedUser) {
+        updateAuthUI(false);
+        return;
+    }
+
+    try {
+        const user = JSON.parse(storedUser);
+        if (user && user.isAdmin) {
+            sessionStorage.setItem('adminAuthenticated', 'true');
+        }
+        updateAuthUI(true, user);
+    } catch (error) {
+        sessionStorage.removeItem('authUser');
+        updateAuthUI(false);
+    }
 }
 
 // Actualizar indicador de fortaleza de contraseña
@@ -337,14 +406,8 @@ function showNotification(message, type = 'info') {
 
 // Inicializar sistema de autenticación y carrito cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar autenticación
     initAuth();
-    
-    // Inicializar menú de usuario si el usuario está autenticado
-    // En una implementación real, verificaríamos el estado de autenticación del servidor
-    // updateAuthUI(false); // Descomentar para forzar estado de no autenticado
-    
-    // Inicializar carrito
+    restoreAuthState();
     initCart();
 });
 
