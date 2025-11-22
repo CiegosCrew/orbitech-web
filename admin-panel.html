@@ -489,6 +489,45 @@
             display: block;
         }
 
+        /* Forms */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 14px;
+            color: var(--muted-text);
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        }
+        textarea.form-control {
+            min-height: 96px;
+            resize: vertical;
+        }
+        @media (max-width: 900px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -822,9 +861,7 @@
                                 <div class="form-group">
                                     <label>Moneda</label>
                                     <select class="form-control">
-                                        <option>USD - Dólar Estadounidense</option>
-                                        <option>EUR - Euro</option>
-                                        <option selected>MXN - Peso Mexicano</option>
+                                        <option selected>ARS - Peso Argentino</option>
                                     </select>
                                 </div>
                             </div>
