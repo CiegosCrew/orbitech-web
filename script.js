@@ -401,15 +401,139 @@ function showNotification(message, type = 'info') {
 }
 
 // ====================
-// CARRITO DE COMPRAS
 // ====================
 
 // Inicializar sistema de autenticación y carrito cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
     initAuth();
     restoreAuthState();
+    initCatalog();
     initCart();
 });
+
+// Inicializar catálogo de productos/ofertas
+function initCatalog() {
+    const productGrid = document.querySelector('.product-grid');
+    const offersGrid = document.querySelector('.ofertas-grid');
+    const heroSearchInput = document.querySelector('.hero .search-bar input');
+
+    if (!productGrid) return;
+
+    // Catálogo de ejemplo (puedes ajustar nombres y precios más adelante)
+    const products = [
+        {
+            id: 'prod-1',
+            name: 'Notebook Gamer 15"',
+            description: 'Ryzen 5, 16GB RAM, SSD 512GB',
+            price: 799.99,
+            image: 'https://via.placeholder.com/400x250?text=Notebook+Gamer'
+        },
+        {
+            id: 'prod-2',
+            name: 'Auriculares Inalámbricos',
+            description: 'Bluetooth 5.0, cancelación de ruido',
+            price: 59.99,
+            image: 'https://via.placeholder.com/400x250?text=Auriculares'
+        },
+        {
+            id: 'prod-3',
+            name: 'Monitor 24" Full HD',
+            description: '75Hz, panel IPS',
+            price: 189.99,
+            image: 'https://via.placeholder.com/400x250?text=Monitor+24'
+        },
+        {
+            id: 'prod-4',
+            name: 'Silla Gamer Ergónomica',
+            description: 'Soporte lumbar, reclinable',
+            price: 229.99,
+            image: 'https://via.placeholder.com/400x250?text=Silla+Gamer'
+        }
+    ];
+
+    const offers = [
+        {
+            id: 'offer-1',
+            name: 'Combo Teclado + Mouse',
+            price: 49.99,
+            discountLabel: '-20% OFF',
+            image: 'https://via.placeholder.com/400x200?text=Combo+Teclado+Mouse'
+        },
+        {
+            id: 'offer-2',
+            name: 'Smartwatch Deportivo',
+            price: 69.99,
+            discountLabel: '-15% OFF',
+            image: 'https://via.placeholder.com/400x200?text=Smartwatch'
+        }
+    ];
+
+    function renderProducts(filterText = '') {
+        if (!productGrid) return;
+        productGrid.innerHTML = '';
+
+        const normalizedFilter = filterText.trim().toLowerCase();
+
+        const filtered = products.filter(p => {
+            if (!normalizedFilter) return true;
+            const haystack = `${p.name} ${p.description}`.toLowerCase();
+            return haystack.includes(normalizedFilter);
+        });
+
+        if (filtered.length === 0) {
+            const empty = document.createElement('p');
+            empty.textContent = 'No se encontraron productos para esa búsqueda.';
+            empty.style.textAlign = 'center';
+            empty.style.color = '#7f8c8d';
+            productGrid.appendChild(empty);
+            return;
+        }
+
+        filtered.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.id = product.id;
+            card.innerHTML = `
+                <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/400x250?text=Sin+imagen'">
+                <h3>${product.name}</h3>
+                <p class="description">${product.description}</p>
+                <p class="price" data-price="${product.price}">$${product.price.toFixed(2)}</p>
+                <button class="add-to-cart">Añadir al carrito</button>
+            `;
+            productGrid.appendChild(card);
+        });
+    }
+
+    function renderOffers() {
+        if (!offersGrid) return;
+        offersGrid.innerHTML = '';
+
+        offers.forEach(offer => {
+            const card = document.createElement('div');
+            card.className = 'oferta-card';
+            card.dataset.id = offer.id;
+            card.innerHTML = `
+                <span class="discount-badge">${offer.discountLabel}</span>
+                <img src="${offer.image}" alt="${offer.name}" onerror="this.src='https://via.placeholder.com/400x200?text=Sin+imagen'">
+                <h3>${offer.name}</h3>
+                <p class="price" data-price="${offer.price}">$${offer.price.toFixed(2)}</p>
+                <button class="btn-oferta">Añadir al carrito</button>
+            `;
+            offersGrid.appendChild(card);
+        });
+    }
+
+    // Render inicial
+    renderProducts();
+    renderOffers();
+
+    // Buscador del hero filtrando productos
+    if (heroSearchInput) {
+        heroSearchInput.addEventListener('input', () => {
+            renderProducts(heroSearchInput.value);
+        });
+    }
+}
 
 // Inicializar carrito
 function initCart() {
@@ -420,12 +544,11 @@ function initCart() {
     const cartItemsContainer = document.querySelector('.cart-items');
     const cartTotal = document.querySelector('.cart-total span');
     const checkoutBtn = document.querySelector('.checkout-btn');
-    const addToCartBtns = document.querySelectorAll('.add-to-cart, .btn-oferta');
     const overlay = document.createElement('div');
-    
+
     // Carrito
     let cart = [];
-    
+
     // Cargar carrito desde localStorage si existe
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
@@ -437,50 +560,52 @@ function initCart() {
             localStorage.removeItem('cart');
         }
     }
-    
+
     // Crear overlay
     overlay.classList.add('overlay');
     document.body.appendChild(overlay);
-    
+
     // Event Listeners
     if (cartIcon) cartIcon.addEventListener('click', toggleCart);
     if (closeCartBtn) closeCartBtn.addEventListener('click', toggleCart);
     if (overlay) overlay.addEventListener('click', closeCart);
     if (checkoutBtn) checkoutBtn.addEventListener('click', checkout);
-    
-    // Añadir eventos a los botones de "Añadir al carrito"
-    addToCartBtns.forEach(btn => {
-        btn.addEventListener('click', addToCart);
+
+    // Delegación de eventos para botones de "Añadir al carrito"
+    document.addEventListener('click', (e) => {
+        const trigger = e.target.closest('.add-to-cart, .btn-oferta');
+        if (!trigger) return;
+        addToCart(e);
     });
-    
+
     // Funciones del carrito
     function toggleCart() {
         cartSidebar.classList.toggle('active');
         overlay.classList.toggle('active');
         document.body.style.overflow = cartSidebar.classList.contains('active') ? 'hidden' : '';
     }
-    
+
     function closeCart() {
         cartSidebar.classList.remove('active');
         overlay.classList.remove('active');
         document.body.style.overflow = '';
     }
-    
+
     function addToCart(e) {
         e.preventDefault();
         const productCard = e.target.closest('.product-card, .oferta-card');
         if (!productCard) return;
-        
+
         const productId = productCard.dataset.id || Date.now().toString();
         const productName = productCard.querySelector('h3').textContent;
         const priceElement = productCard.querySelector('.price');
-        const priceText = priceElement ? priceElement.textContent.replace(/[^0-9.,]/g, '').replace(',', '.') : '0';
+        const priceText = priceElement ? (priceElement.dataset.price || priceElement.textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) : '0';
         const productPrice = parseFloat(priceText) || 0;
         const productImage = productCard.querySelector('img') ? productCard.querySelector('img').src : '';
-        
+
         // Verificar si el producto ya está en el carrito
         const existingItem = cart.find(item => item.id === productId);
-        
+
         if (existingItem) {
             // Si ya existe, aumentar la cantidad
             existingItem.quantity += 1;

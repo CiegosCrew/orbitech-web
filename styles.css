@@ -327,6 +327,12 @@ nav a:hover {
     margin-bottom: 30px;
 }
 
+.ofertas-header .section-title {
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    text-align: left;
+}
+
 .ver-todo {
     color: var(--accent);
     text-decoration: none;
