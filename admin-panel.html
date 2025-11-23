@@ -539,8 +539,9 @@
             resize: vertical;
         }
 
-        /* Modal agregar producto */
-        #addProductModal {
+        /* Modales admin */
+        #addProductModal,
+        #reportModal {
             position: fixed;
             inset: 0;
             background: rgba(15, 23, 42, 0.55);
@@ -549,7 +550,8 @@
             justify-content: center;
             z-index: 2000;
         }
-        #addProductModal.active {
+        #addProductModal.active,
+        #reportModal.active {
             display: flex;
         }
         .add-product-dialog {
@@ -657,22 +659,16 @@
 
             <div class="tab-content active" id="dashboard-tab">
 
+
             <div class="quick-actions">
-                <div class="quick-action">
-                    <i class="fas fa-plus"></i>
-                    <div>
-                        <h4>Nuevo Producto</h4>
-                        <span>Registra el inventario más reciente</span>
-                    </div>
-                </div>
-                <div class="quick-action">
+                <div class="quick-action" data-action="report">
                     <i class="fas fa-receipt"></i>
                     <div>
                         <h4>Generar Reporte</h4>
                         <span>Descarga métricas en un clic</span>
                     </div>
                 </div>
-                <div class="quick-action">
+                <div class="quick-action" data-action="campaign">
                     <i class="fas fa-bullhorn"></i>
                     <div>
                         <h4>Campaña Express</h4>
@@ -993,6 +989,26 @@
         </div>
     </div>
 
+    <div id="reportModal">
+        <div class="add-product-dialog">
+            <div class="add-product-dialog-header">
+                <h3>Generar reporte</h3>
+                <button type="button" class="close-modal" aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="form-group">
+                <p style="font-size:14px;color:var(--muted-text);">
+                    Se generará un reporte en formato PDF con un resumen básico de tu panel (modo demostración).
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="cancelReport">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="generateReportBtn">
+                    <i class="fas fa-download"></i> Generar reporte
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
     <script>
         // Verificar autenticación y aplicar tema
@@ -1049,25 +1065,14 @@
 
             // Quick actions
             const quickActions = document.querySelectorAll('.quick-action');
-            const productsMenu = document.querySelector('.menu-item[data-tab="products"]');
-            const ordersMenu = document.querySelector('.menu-item[data-tab="orders"]');
             const settingsMenu = document.querySelector('.menu-item[data-tab="settings"]');
 
-            quickActions.forEach((qa, index) => {
+            quickActions.forEach((qa) => {
+                const action = qa.dataset.action;
                 qa.addEventListener('click', () => {
-                    if (index === 0 && productsMenu) {
-                        // Nuevo Producto -> ir a pestaña de Productos
-                        productsMenu.click();
-                        if (typeof showNotification === 'function') {
-                            showNotification('Abre la gestión de productos para crear uno nuevo.', 'info');
-                        }
-                    } else if (index === 1 && ordersMenu) {
-                        // Generar Reporte -> ir a pestaña de Pedidos y simular generación
-                        ordersMenu.click();
-                        if (typeof showNotification === 'function') {
-                            showNotification('Generando reporte de pedidos (demo).', 'success');
-                        }
-                    } else if (index === 2 && settingsMenu) {
+                    if (action === 'report') {
+                        openReportModal();
+                    } else if (action === 'campaign' && settingsMenu) {
                         // Campaña Express -> ir a Configuración
                         settingsMenu.click();
                         if (typeof showNotification === 'function') {
@@ -1084,6 +1089,11 @@
             const cancelAddProduct = document.getElementById('cancelAddProduct');
             const addProductClose = addProductModal ? addProductModal.querySelector('.close-modal') : null;
 
+            const reportModal = document.getElementById('reportModal');
+            const cancelReport = document.getElementById('cancelReport');
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            const reportClose = reportModal ? reportModal.querySelector('.close-modal') : null;
+
             function openAddProductModal() {
                 if (!addProductModal) return;
                 addProductModal.classList.add('active');
@@ -1092,6 +1102,16 @@
             function closeAddProductModal() {
                 if (!addProductModal) return;
                 addProductModal.classList.remove('active');
+            }
+
+            function openReportModal() {
+                if (!reportModal) return;
+                reportModal.classList.add('active');
+            }
+
+            function closeReportModal() {
+                if (!reportModal) return;
+                reportModal.classList.remove('active');
             }
 
             if (addProductBtn && addProductModal) {
@@ -1151,6 +1171,51 @@
 
                     addProductForm.reset();
                     closeAddProductModal();
+                });
+            }
+
+            if (reportModal) {
+                reportModal.addEventListener('click', (e) => {
+                    if (e.target === reportModal) {
+                        closeReportModal();
+                    }
+                });
+            }
+
+            if (cancelReport) {
+                cancelReport.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeReportModal();
+                });
+            }
+
+            if (reportClose) {
+                reportClose.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeReportModal();
+                });
+            }
+
+            if (generateReportBtn) {
+                generateReportBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    const content = `Reporte de Orbitech Admin\n\nGenerado: ${new Date().toLocaleString()}\n\nEste es un reporte de demostración.`;
+                    const blob = new Blob([content], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'reporte-orbitech-demo.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+
+                    if (typeof showNotification === 'function') {
+                        showNotification('Reporte PDF generado y descargado (demo).', 'success');
+                    }
+
+                    closeReportModal();
                 });
             }
         });
