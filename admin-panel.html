@@ -541,7 +541,8 @@
 
         /* Modales admin */
         #addProductModal,
-        #reportModal {
+        #reportModal,
+        #campaignModal {
             position: fixed;
             inset: 0;
             background: rgba(15, 23, 42, 0.55);
@@ -551,7 +552,8 @@
             z-index: 2000;
         }
         #addProductModal.active,
-        #reportModal.active {
+        #reportModal.active,
+        #campaignModal.active {
             display: flex;
         }
         .add-product-dialog {
@@ -1009,6 +1011,43 @@
         </div>
     </div>
 
+    <div id="campaignModal">
+        <div class="add-product-dialog">
+            <div class="add-product-dialog-header">
+                <h3>Campaña express</h3>
+                <button type="button" class="close-modal" aria-label="Cerrar">&times;</button>
+            </div>
+            <form id="campaignForm">
+                <div class="form-group">
+                    <label for="campaignType">Tipo de campaña</label>
+                    <select id="campaignType" class="form-control" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="relampago">Ofertas relámpago 24h</option>
+                        <option value="finsemana">Fin de semana de descuentos</option>
+                        <option value="cyber">Cyber Orbitech</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="campaignPlacement">Dónde publicar las ofertas</label>
+                    <select id="campaignPlacement" class="form-control" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="home">Solo en la página principal</option>
+                        <option value="home-social">Home + redes sociales (demo)</option>
+                        <option value="all">Sitio completo (demo)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="campaignMessage">Mensaje de la campaña</label>
+                    <textarea id="campaignMessage" class="form-control" rows="3" placeholder="Ej: ¡Aprovechá hasta 30% OFF en productos seleccionados!" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="cancelCampaign">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Publicar campaña</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="script.js"></script>
     <script>
         // Verificar autenticación y aplicar tema
@@ -1065,19 +1104,14 @@
 
             // Quick actions
             const quickActions = document.querySelectorAll('.quick-action');
-            const settingsMenu = document.querySelector('.menu-item[data-tab="settings"]');
 
             quickActions.forEach((qa) => {
                 const action = qa.dataset.action;
                 qa.addEventListener('click', () => {
                     if (action === 'report') {
                         openReportModal();
-                    } else if (action === 'campaign' && settingsMenu) {
-                        // Campaña Express -> ir a Configuración
-                        settingsMenu.click();
-                        if (typeof showNotification === 'function') {
-                            showNotification('Abre configuración para preparar una campaña express.', 'info');
-                        }
+                    } else if (action === 'campaign') {
+                        openCampaignModal();
                     }
                 });
             });
@@ -1093,6 +1127,11 @@
             const cancelReport = document.getElementById('cancelReport');
             const generateReportBtn = document.getElementById('generateReportBtn');
             const reportClose = reportModal ? reportModal.querySelector('.close-modal') : null;
+
+            const campaignModal = document.getElementById('campaignModal');
+            const cancelCampaign = document.getElementById('cancelCampaign');
+            const campaignForm = document.getElementById('campaignForm');
+            const campaignClose = campaignModal ? campaignModal.querySelector('.close-modal') : null;
 
             function openAddProductModal() {
                 if (!addProductModal) return;
@@ -1112,6 +1151,16 @@
             function closeReportModal() {
                 if (!reportModal) return;
                 reportModal.classList.remove('active');
+            }
+
+            function openCampaignModal() {
+                if (!campaignModal) return;
+                campaignModal.classList.add('active');
+            }
+
+            function closeCampaignModal() {
+                if (!campaignModal) return;
+                campaignModal.classList.remove('active');
             }
 
             if (addProductBtn && addProductModal) {
@@ -1216,6 +1265,58 @@
                     }
 
                     closeReportModal();
+                });
+            }
+
+            if (campaignModal) {
+                campaignModal.addEventListener('click', (e) => {
+                    if (e.target === campaignModal) {
+                        closeCampaignModal();
+                    }
+                });
+            }
+
+            if (cancelCampaign) {
+                cancelCampaign.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeCampaignModal();
+                });
+            }
+
+            if (campaignClose) {
+                campaignClose.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    closeCampaignModal();
+                });
+            }
+
+            if (campaignForm) {
+                campaignForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+
+                    const type = document.getElementById('campaignType');
+                    const placement = document.getElementById('campaignPlacement');
+                    const message = document.getElementById('campaignMessage');
+
+                    if (!type || !placement || !message) return;
+
+                    if (!type.value || !placement.value || !message.value.trim()) {
+                        if (typeof showNotification === 'function') {
+                            showNotification('Completa los datos de la campaña.', 'error');
+                        } else {
+                            alert('Completa los datos de la campaña.');
+                        }
+                        return;
+                    }
+
+                    if (typeof showNotification === 'function') {
+                        showNotification('Campaña express creada (demo). Falta conectar con el sistema de ofertas.', 'success');
+                    } else {
+                        alert('Campaña express creada (demo).');
+                    }
+
+                    campaignForm.reset();
+                    closeCampaignModal();
                 });
             }
         });
