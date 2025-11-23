@@ -806,7 +806,7 @@
                         <h3 class="section-title">Gestión de Productos</h3>
                         <div class="section-actions">
                             <button class="btn btn-outline"><i class="fas fa-filter"></i> Filtrar</button>
-                            <button class="btn btn-primary"><i class="fas fa-plus"></i> Agregar Producto</button>
+                            <button class="btn btn-primary" data-open-add-product="true"><i class="fas fa-plus"></i> Agregar Producto</button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -823,7 +823,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr id="productsEmptyRow">
                                     <td colspan="7" style="text-align:center;color:var(--muted-text);padding:16px;">Sin datos disponibles</td>
                                 </tr>
                             </tbody>
