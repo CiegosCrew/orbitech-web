@@ -529,6 +529,7 @@ function initCatalog() {
     const productGrid = document.querySelector('.product-grid');
     const offersGrid = document.querySelector('.ofertas-grid');
     const heroSearchInput = document.querySelector('.hero .search-bar input');
+    const heroSearchButton = document.querySelector('.hero .search-bar button');
     const heroSection = document.getElementById('inicio');
     const productsSection = document.getElementById('productos');
     const productDetailSection = document.getElementById('product-detail');
@@ -824,7 +825,23 @@ function initCatalog() {
 
     // Buscador del hero filtrando productos
     if (heroSearchInput) {
+        // Filtrar mientras se escribe
         heroSearchInput.addEventListener('input', () => {
+            renderProducts(heroSearchInput.value);
+        });
+
+        // Permitir presionar Enter para buscar
+        heroSearchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                renderProducts(heroSearchInput.value);
+            }
+        });
+    }
+
+    // Botón de la lupa también dispara la búsqueda
+    if (heroSearchButton && heroSearchInput) {
+        heroSearchButton.addEventListener('click', (e) => {
+            e.preventDefault();
             renderProducts(heroSearchInput.value);
         });
     }
