@@ -800,6 +800,13 @@ function initCatalog() {
         }
     });
 
+    // Volver a sincronizar productos cuando se vuelve a esta página (por ejemplo, con el botón Atrás)
+    window.addEventListener('pageshow', () => {
+        refreshProductsFromAdmin();
+        const currentSearch = heroSearchInput ? heroSearchInput.value : '';
+        renderProducts(currentSearch);
+    });
+
     // Filtros por categoría
     const filterChips = document.querySelectorAll('.product-filters .filter-chip');
     if (filterChips.length) {
