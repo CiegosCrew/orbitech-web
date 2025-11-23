@@ -61,6 +61,28 @@ const ADMIN_CREDENTIALS = {
     name: 'Administrador'
 };
 
+const USERS_KEY = 'orbitech-users';
+
+function loadUsers() {
+    try {
+        const raw = localStorage.getItem(USERS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        console.error('Error al cargar usuarios:', e);
+        return [];
+    }
+}
+
+function saveUsers(list) {
+    try {
+        localStorage.setItem(USERS_KEY, JSON.stringify(list));
+    } catch (e) {
+        console.error('Error al guardar usuarios:', e);
+    }
+}
+
 // Elementos del DOM del sistema de autenticación
 const authModal = document.querySelector('.auth-modal');
 const authContent = document.querySelector('.auth-content');
@@ -191,18 +213,40 @@ function handleLogin(e) {
 
     const isAdmin = email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password;
 
-    if (!isAdmin) {
+    if (isAdmin) {
+        const user = {
+            name: ADMIN_CREDENTIALS.name,
+            email: ADMIN_CREDENTIALS.email,
+            isAdmin: true
+        };
+
+        sessionStorage.setItem('adminAuthenticated', 'true');
+        sessionStorage.setItem('authUser', JSON.stringify(user));
+
+        showNotification('Inicio de sesión exitoso', 'success');
+        closeAuthModal();
+        updateAuthUI(true, user);
+        return;
+    }
+
+    // Buscar usuario registrado en la "base de datos" local
+    const users = loadUsers();
+    const found = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+
+    if (!found) {
         showNotification('Correo o contraseña incorrectos', 'error');
         return;
     }
 
     const user = {
-        name: ADMIN_CREDENTIALS.name,
-        email: ADMIN_CREDENTIALS.email,
-        isAdmin: true
+        name: found.name || 'Usuario',
+        email: found.email,
+        isAdmin: !!found.isAdmin
     };
 
-    sessionStorage.setItem('adminAuthenticated', 'true');
+    if (user.isAdmin) {
+        sessionStorage.setItem('adminAuthenticated', 'true');
+    }
     sessionStorage.setItem('authUser', JSON.stringify(user));
 
     showNotification('Inicio de sesión exitoso', 'success');
@@ -241,8 +285,24 @@ function handleRegister(e) {
         return;
     }
     
-    // Aquí iría la lógica de registro con el servidor
-    // Por ahora, solo mostramos un mensaje de éxito
+    const users = loadUsers();
+    const exists = users.some(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+    if (exists) {
+        showNotification('Ya existe un usuario registrado con ese correo', 'error');
+        return;
+    }
+
+    const newUser = {
+        name,
+        email,
+        password,
+        isAdmin: false,
+        createdAt: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    saveUsers(users);
+
     showNotification('¡Registro exitoso! Ahora puedes iniciar sesión', 'success');
     
     // Cambiar a la pestaña de inicio de sesión
