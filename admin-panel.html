@@ -399,6 +399,15 @@
         .btn-primary:hover {
             background-color: var(--primary-hover);
         }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
         
         .btn-delete {
             background-color: var(--danger-color);
@@ -537,6 +546,100 @@
         textarea.form-control {
             min-height: 96px;
             resize: vertical;
+        }
+
+        .mass-price-notes {
+            list-style: disc;
+            margin: 0 0 14px 18px;
+            padding: 0;
+            font-size: 13px;
+            color: var(--muted-text);
+        }
+
+        .mass-price-card {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 18px 18px 16px;
+            border: 1px solid var(--border-color);
+            margin-top: 6px;
+        }
+
+        .mass-price-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+
+        .mass-price-input-wrapper .form-control {
+            flex: 1;
+        }
+
+        .mass-price-suffix {
+            font-size: 14px;
+            color: var(--muted-text);
+        }
+
+        .mass-price-help {
+            display: block;
+            font-size: 12px;
+            color: var(--muted-text);
+            margin-bottom: 10px;
+        }
+
+        /* Dropzone de imagen de producto */
+        .image-dropzone {
+            border-radius: 18px;
+            border: 2px dashed #22c55e;
+            background: rgba(34, 197, 94, 0.04);
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .image-dropzone-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: #22c55e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .image-dropzone-icon i {
+            font-size: 18px;
+        }
+        .image-dropzone-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .image-dropzone-subtitle {
+            font-size: 12px;
+            color: var(--muted-text);
+        }
+        .image-dropzone-button {
+            margin-top: 6px;
+            font-size: 13px;
+            padding-inline: 16px;
+        }
+        .image-dropzone input[type="file"] {
+            display: none;
+        }
+        .image-dropzone-hint {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--muted-text);
+        }
+        .image-dropzone.dragover {
+            background: rgba(34, 197, 94, 0.08);
+            border-color: #16a34a;
         }
 
         /* Modales admin */
@@ -824,6 +927,25 @@
                         </table>
                     </div>
                 </div>
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Aumento masivo de precios</h3>
+                    </div>
+                    <ul class="mass-price-notes">
+                        <li>Sirve para aumentar masivamente el precio de todos tus productos en función a un porcentaje dado de una manera simple y rápida.</li>
+                        <li>Una vez aumentados los precios de manera masiva, no es posible volver atrás desde esta herramienta.</li>
+                        <li>Si el producto está en oferta, se aumenta el precio de ambos teniendo en cuenta el porcentaje configurado (modo demo).</li>
+                    </ul>
+                    <div class="mass-price-card">
+                        <label for="massPricePercentage">Porcentaje de aumento</label>
+                        <div class="mass-price-input-wrapper">
+                            <input type="number" id="massPricePercentage" class="form-control" placeholder="100" min="0" step="0.01">
+                            <span class="mass-price-suffix">%</span>
+                        </div>
+                        <small class="mass-price-help">Indica el porcentaje con el cual se van a incrementar los precios de todos los productos listados en la tabla.</small>
+                        <button type="button" class="btn btn-success" id="applyMassPriceIncrease">Aumentar precios</button>
+                    </div>
+                </div>
             </div>
 
             <div class="tab-content" id="orders-tab">
@@ -963,7 +1085,14 @@
             <form id="addProductForm">
                 <div class="form-group">
                     <label for="productImage">Imagen del producto</label>
-                    <input type="file" id="productImage" class="form-control" accept="image/*" required>
+                    <div class="image-dropzone" id="productImageDropzone">
+                        <div class="image-dropzone-icon"><i class="fas fa-plus"></i></div>
+                        <p class="image-dropzone-title">Podés arrastrar y soltar las fotos, o elegirlas desde tu dispositivo</p>
+                        <p class="image-dropzone-subtitle">Cargá como máximo 6 fotos (de hasta 10 MB cada una) con formato JPG, PNG, JPEG o WEBP.</p>
+                        <button type="button" class="btn btn-outline image-dropzone-button">Elegir archivos</button>
+                        <input type="file" id="productImage" class="form-control" accept="image/*" required multiple>
+                    </div>
+                    <small class="image-dropzone-hint" id="productImageHint">Ningún archivo seleccionado.</small>
                 </div>
                 <div class="form-group">
                     <label for="productTitle">Título</label>
@@ -1128,6 +1257,15 @@
             const campaignForm = document.getElementById('campaignForm');
             const campaignClose = campaignModal ? campaignModal.querySelector('.close-modal') : null;
 
+            // Dropzone de imagen de producto
+            const productImageDropzone = document.getElementById('productImageDropzone');
+            const productImageInput = document.getElementById('productImage');
+            const productImageHint = document.getElementById('productImageHint');
+
+            // Aumento masivo de precios
+            const massPriceInput = document.getElementById('massPricePercentage');
+            const massPriceBtn = document.getElementById('applyMassPriceIncrease');
+
             function openAddProductModal() {
                 if (!addProductModal) return;
                 addProductModal.classList.add('active');
@@ -1156,6 +1294,110 @@
             function closeCampaignModal() {
                 if (!campaignModal) return;
                 campaignModal.classList.remove('active');
+            }
+
+            // Comportamiento del dropzone de imagen de producto
+            if (productImageDropzone && productImageInput) {
+                const maxFiles = 6;
+                const maxSizeBytes = 10 * 1024 * 1024; // 10 MB
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+                function updateHint() {
+                    if (!productImageHint) return;
+                    const files = Array.from(productImageInput.files || []);
+                    if (!files.length) {
+                        productImageHint.textContent = 'Ningún archivo seleccionado.';
+                        return;
+                    }
+                    if (files.length === 1) {
+                        productImageHint.textContent = `1 archivo seleccionado: ${files[0].name}`;
+                    } else {
+                        productImageHint.textContent = `${files.length} archivos seleccionados.`;
+                    }
+                }
+
+                function setFiles(validFiles) {
+                    const dt = new DataTransfer();
+                    validFiles.forEach(file => dt.items.add(file));
+                    productImageInput.files = dt.files;
+                    updateHint();
+                }
+
+                function handleFiles(fileList) {
+                    const incoming = Array.from(fileList || []);
+                    if (!incoming.length) return;
+
+                    const messages = [];
+                    let valid = incoming.filter((file, index) => {
+                        if (index >= maxFiles) {
+                            messages.push('Solo se tomarán las primeras 6 imágenes.');
+                            return false;
+                        }
+                        if (file.size > maxSizeBytes) {
+                            messages.push(`"${file.name}" supera los 10 MB y se omitirá.`);
+                            return false;
+                        }
+                        if (!allowedTypes.includes(file.type)) {
+                            messages.push(`"${file.name}" no es JPG/PNG/JPEG/WEBP y se omitirá.`);
+                            return false;
+                        }
+                        return true;
+                    });
+
+                    if (!valid.length) {
+                        if (typeof showNotification === 'function') {
+                            showNotification('No se pudo cargar ninguna imagen válida.', 'error');
+                        } else if (messages.length) {
+                            alert(messages.join('\n'));
+                        }
+                        return;
+                    }
+
+                    setFiles(valid);
+
+                    if (messages.length && typeof showNotification === 'function') {
+                        showNotification(messages.join(' '), 'info');
+                    }
+                }
+
+                // Click en la caja o en el botón interno
+                productImageDropzone.addEventListener('click', (e) => {
+                    const target = e.target;
+                    if (target.closest('button') || target === productImageDropzone) {
+                        productImageInput.click();
+                    }
+                });
+
+                // Cambios desde el selector de archivos
+                productImageInput.addEventListener('change', () => {
+                    handleFiles(productImageInput.files);
+                });
+
+                // Drag & drop
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    productImageDropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        productImageDropzone.classList.add('dragover');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    productImageDropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        productImageDropzone.classList.remove('dragover');
+                    });
+                });
+
+                productImageDropzone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    if (!dt || !dt.files) return;
+                    handleFiles(dt.files);
+                });
+
+                // Inicializar texto inicial
+                updateHint();
             }
 
             if (addProductBtn && addProductModal) {
@@ -1365,6 +1607,51 @@
 
                     campaignForm.reset();
                     closeCampaignModal();
+                });
+            }
+
+            if (massPriceBtn && massPriceInput) {
+                massPriceBtn.addEventListener('click', () => {
+                    const value = parseFloat((massPriceInput.value || '').replace(',', '.'));
+                    if (isNaN(value) || value <= 0) {
+                        if (typeof showNotification === 'function') {
+                            showNotification('Ingresá un porcentaje válido mayor a 0.', 'error');
+                        } else {
+                            alert('Ingresá un porcentaje válido mayor a 0.');
+                        }
+                        return;
+                    }
+
+                    const tbody = document.querySelector('#products-tab table tbody');
+                    if (!tbody) return;
+
+                    const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.id !== 'productsEmptyRow');
+                    if (!rows.length) {
+                        if (typeof showNotification === 'function') {
+                            showNotification('No hay productos para actualizar.', 'error');
+                        } else {
+                            alert('No hay productos para actualizar.');
+                        }
+                        return;
+                    }
+
+                    const factor = 1 + (value / 100);
+
+                    rows.forEach(row => {
+                        const priceCell = row.querySelector('td:nth-child(5)');
+                        if (!priceCell) return;
+                        const text = priceCell.textContent || '';
+                        const numeric = parseFloat(text.replace(/[^0-9.,]/g, '').replace(',', '.'));
+                        if (isNaN(numeric)) return;
+                        const newPrice = numeric * factor;
+                        priceCell.textContent = '$' + newPrice.toFixed(2);
+                    });
+
+                    if (typeof showNotification === 'function') {
+                        showNotification('Precios actualizados en la tabla (demo).', 'success');
+                    } else {
+                        alert('Precios actualizados en la tabla (demo).');
+                    }
                 });
             }
         });
