@@ -765,6 +765,27 @@ function initCatalog() {
         });
     }
 
+    const navHomeLink = document.querySelector('nav a[href="#inicio"]');
+    const navProductsLink = document.querySelector('nav a[href="#productos"]');
+    const logoLink = document.querySelector('header .logo');
+
+    function handleNavBackToListing() {
+        if (!productDetailSection || !productsSection) return;
+        if (productDetailSection.style.display === 'block') {
+            closeProductDetail();
+        }
+    }
+
+    if (navHomeLink) {
+        navHomeLink.addEventListener('click', handleNavBackToListing);
+    }
+    if (navProductsLink) {
+        navProductsLink.addEventListener('click', handleNavBackToListing);
+    }
+    if (logoLink) {
+        logoLink.addEventListener('click', handleNavBackToListing);
+    }
+
     setupShippingCalculator();
 }
 

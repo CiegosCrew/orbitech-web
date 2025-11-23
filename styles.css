@@ -270,7 +270,7 @@ nav a:hover {
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
+    gap: 26px;
     margin-top: 40px;
 }
 
@@ -409,7 +409,7 @@ nav a:hover {
 }
 
 .product-detail {
-    padding: 80px 5%;
+    padding: 70px 5% 80px;
     background: #f9fafb;
 }
 
@@ -447,19 +447,19 @@ nav a:hover {
 
 .product-detail-media img {
     width: 100%;
-    max-height: 380px;
+    max-height: 360px;
     object-fit: cover;
     border-radius: 14px;
 }
 
 .product-detail-content h2 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     margin-bottom: 10px;
 }
 
 .product-detail-description {
     color: var(--gray);
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .product-detail .price {
@@ -524,6 +524,29 @@ nav a:hover {
 @media (max-width: 900px) {
     .product-detail-card {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .product-detail {
+        padding: 60px 4% 70px;
+    }
+
+    .product-detail-card {
+        padding: 20px 18px;
+        gap: 18px;
+    }
+
+    .product-detail-content h2 {
+        font-size: 1.3rem;
+    }
+
+    .shipping-form {
+        flex-direction: column;
+    }
+
+    .shipping-form button {
+        width: 100%;
     }
 }
 
