@@ -469,6 +469,18 @@ function initCatalog() {
     const productGrid = document.querySelector('.product-grid');
     const offersGrid = document.querySelector('.ofertas-grid');
     const heroSearchInput = document.querySelector('.hero .search-bar input');
+    const productsSection = document.getElementById('productos');
+    const productDetailSection = document.getElementById('product-detail');
+    const detailImage = document.getElementById('detailImage');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailDescription = document.getElementById('detailDescription');
+    const detailPrice = document.getElementById('detailPrice');
+    const detailBadge = document.getElementById('detailBadge');
+    const detailBackBtn = document.getElementById('productDetailBack');
+    const detailCard = document.getElementById('productDetailCard');
+    const shippingPostalCode = document.getElementById('shippingPostalCode');
+    const calculateShippingBtn = document.getElementById('calculateShippingBtn');
+    const shippingResult = document.getElementById('shippingResult');
 
     if (!productGrid) return;
 
@@ -512,6 +524,7 @@ function initCatalog() {
     ];
 
     let products = baseProducts.slice();
+    let currentProduct = null;
 
     const ADMIN_PRODUCTS_KEY = 'orbitech-admin-products';
 
@@ -566,6 +579,92 @@ function initCatalog() {
 
     let activeCategory = 'all';
 
+    function openProductDetail(productId) {
+        if (!productDetailSection || !productsSection) return;
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        currentProduct = product;
+
+        if (detailImage) {
+            detailImage.src = product.image;
+            detailImage.alt = product.name;
+            detailImage.style.display = product.image ? 'block' : 'none';
+        }
+
+        if (detailTitle) detailTitle.textContent = product.name;
+        if (detailDescription) detailDescription.textContent = product.description || '';
+        if (detailPrice) {
+            detailPrice.textContent = `$${product.price.toFixed(2)}`;
+            detailPrice.dataset.price = String(product.price);
+        }
+
+        if (detailBadge) {
+            if (product.badge) {
+                detailBadge.textContent = product.badge;
+                detailBadge.style.display = 'inline-block';
+            } else {
+                detailBadge.style.display = 'none';
+            }
+        }
+
+        if (detailCard) {
+            detailCard.dataset.id = product.id;
+        }
+
+        if (shippingPostalCode) shippingPostalCode.value = '';
+        if (shippingResult) shippingResult.textContent = '';
+
+        productsSection.style.display = 'none';
+        productDetailSection.style.display = 'block';
+        productDetailSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closeProductDetail() {
+        if (!productDetailSection || !productsSection) return;
+        productDetailSection.style.display = 'none';
+        productsSection.style.display = 'block';
+        currentProduct = null;
+        if (shippingResult) shippingResult.textContent = '';
+    }
+
+    function setupShippingCalculator() {
+        if (!calculateShippingBtn || !shippingPostalCode || !shippingResult) return;
+
+        function calculate() {
+            const cp = shippingPostalCode.value.trim();
+            if (!cp) {
+                shippingResult.textContent = 'Ingresá tu código postal para calcular el envío.';
+                return;
+            }
+
+            if (!/^\d{4,5}$/.test(cp)) {
+                shippingResult.textContent = 'Código postal inválido. Debe tener 4 o 5 dígitos.';
+                return;
+            }
+
+            let base = 3500;
+            const first = cp[0];
+            if (first === '1' || first === '2') base = 2800;
+            else if (first === '5' || first === '6') base = 4200;
+            else if (first === '8' || first === '9') base = 4600;
+
+            shippingResult.textContent = `Envío estimado a ${cp}: $${base.toFixed(2)} (3 a 5 días hábiles).`;
+        }
+
+        calculateShippingBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            calculate();
+        });
+
+        shippingPostalCode.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                calculate();
+            }
+        });
+    }
+
     function renderProducts(filterText = '') {
         if (!productGrid) return;
         productGrid.innerHTML = '';
@@ -605,8 +704,9 @@ function initCatalog() {
                     <span class="installments"><i class="fas fa-credit-card"></i> Hasta 6 cuotas sin interés</span>
                     <span class="shipping"><i class="fas fa-truck"></i> Envío a todo el país</span>
                 </div>
-                <button class="add-to-cart">Añadir al carrito</button>
             `;
+
+            card.addEventListener('click', () => openProductDetail(product.id));
             productGrid.appendChild(card);
         });
     }
@@ -657,6 +757,15 @@ function initCatalog() {
             renderProducts(heroSearchInput.value);
         });
     }
+
+    if (detailBackBtn) {
+        detailBackBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeProductDetail();
+        });
+    }
+
+    setupShippingCalculator();
 }
 
 // Inicializar carrito
@@ -717,11 +826,12 @@ function initCart() {
 
     function addToCart(e) {
         e.preventDefault();
-        const productCard = e.target.closest('.product-card, .oferta-card');
+        const productCard = e.target.closest('.product-card, .oferta-card, .product-detail-card');
         if (!productCard) return;
 
         const productId = productCard.dataset.id || Date.now().toString();
-        const productName = productCard.querySelector('h3').textContent;
+        const nameElement = productCard.querySelector('h3, h2');
+        const productName = nameElement ? nameElement.textContent : 'Producto';
         const priceElement = productCard.querySelector('.price');
         const priceText = priceElement ? (priceElement.dataset.price || priceElement.textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) : '0';
         const productPrice = parseFloat(priceText) || 0;
