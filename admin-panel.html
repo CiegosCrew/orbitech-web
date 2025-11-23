@@ -314,6 +314,7 @@
             display: flex;
             align-items: center;
             gap: 14px;
+            cursor: pointer;
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
@@ -966,6 +967,36 @@
                     // Mostrar el contenido de la pestaña seleccionada
                     const tabId = this.getAttribute('data-tab');
                     document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // Quick actions
+            const quickActions = document.querySelectorAll('.quick-action');
+            const productsMenu = document.querySelector('.menu-item[data-tab="products"]');
+            const ordersMenu = document.querySelector('.menu-item[data-tab="orders"]');
+            const settingsMenu = document.querySelector('.menu-item[data-tab="settings"]');
+
+            quickActions.forEach((qa, index) => {
+                qa.addEventListener('click', () => {
+                    if (index === 0 && productsMenu) {
+                        // Nuevo Producto -> ir a pestaña de Productos
+                        productsMenu.click();
+                        if (typeof showNotification === 'function') {
+                            showNotification('Abre la gestión de productos para crear uno nuevo.', 'info');
+                        }
+                    } else if (index === 1 && ordersMenu) {
+                        // Generar Reporte -> ir a pestaña de Pedidos y simular generación
+                        ordersMenu.click();
+                        if (typeof showNotification === 'function') {
+                            showNotification('Generando reporte de pedidos (demo).', 'success');
+                        }
+                    } else if (index === 2 && settingsMenu) {
+                        // Campaña Express -> ir a Configuración
+                        settingsMenu.click();
+                        if (typeof showNotification === 'function') {
+                            showNotification('Abre configuración para preparar una campaña express.', 'info');
+                        }
+                    }
                 });
             });
         });
