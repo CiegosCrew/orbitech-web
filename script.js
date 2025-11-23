@@ -488,44 +488,7 @@ function initCatalog() {
 
     if (!productGrid) return;
 
-    const baseProducts = [
-        {
-            id: 'prod-1',
-            name: 'Notebook Gamer 15"',
-            description: 'Ryzen 5, 16GB RAM, SSD 512GB',
-            price: 799.99,
-            image: 'https://via.placeholder.com/400x250?text=Notebook+Gamer',
-            category: 'laptops',
-            badge: 'Más vendido'
-        },
-        {
-            id: 'prod-2',
-            name: 'Auriculares Inalámbricos',
-            description: 'Bluetooth 5.0, cancelación de ruido',
-            price: 59.99,
-            image: 'https://via.placeholder.com/400x250?text=Auriculares',
-            category: 'audio',
-            badge: 'Top ventas'
-        },
-        {
-            id: 'prod-3',
-            name: 'Monitor 24" Full HD',
-            description: '75Hz, panel IPS',
-            price: 189.99,
-            image: 'https://via.placeholder.com/400x250?text=Monitor+24',
-            category: 'monitores',
-            badge: 'Nuevo'
-        },
-        {
-            id: 'prod-4',
-            name: 'Silla Gamer Ergónomica',
-            description: 'Soporte lumbar, reclinable',
-            price: 229.99,
-            image: 'https://via.placeholder.com/400x250?text=Silla+Gamer',
-            category: 'sillas',
-            badge: 'Recomendado'
-        }
-    ];
+    const baseProducts = [];
 
     let products = baseProducts.slice();
     let currentProduct = null;
