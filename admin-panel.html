@@ -2079,26 +2079,3 @@
     </script>
 </body>
 </html>
-                    const factor = 1 + (value / 100);
-
-                    rows.forEach(row => {
-                        const priceCell = row.querySelector('td:nth-child(5)');
-                        if (!priceCell) return;
-                        const text = priceCell.textContent || '';
-                        const numeric = parseFloat(text.replace(/[^0-9.,]/g, '').replace(',', '.'));
-                        if (isNaN(numeric)) return;
-                        const newPrice = numeric * factor;
-                        priceCell.textContent = '$' + newPrice.toFixed(2);
-                    });
-
-                    if (typeof showNotification === 'function') {
-                        showNotification('Precios actualizados en la tabla (demo).', 'success');
-                    } else {
-                        alert('Precios actualizados en la tabla (demo).');
-                    }
-                });
-            }
-        });
-    </script>
-</body>
-</html>
