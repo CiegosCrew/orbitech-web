@@ -727,15 +727,6 @@ function initCatalog() {
                 </div>
             `;
 
-            const cardImage = card.querySelector('img');
-            if (cardImage) {
-                cardImage.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (!cardImage.src) return;
-                    openImageLightbox(cardImage.src, cardImage.alt || product.name);
-                });
-            }
-
             card.addEventListener('click', () => openProductDetail(product.id));
             productGrid.appendChild(card);
         });
