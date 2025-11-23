@@ -999,8 +999,8 @@ footer {
 .image-lightbox-content {
     position: relative;
     z-index: 1;
-    max-width: 95vw;
-    max-height: 90vh;
+    max-width: 720px;
+    max-height: 80vh;
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
