@@ -738,7 +738,9 @@
             padding: 22px 24px;
             width: 100%;
             max-width: 480px;
+            max-height: calc(100vh - 80px);
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+            overflow-y: auto;
         }
         .add-product-dialog-header {
             display: flex;
@@ -894,22 +896,6 @@
                             <div class="card-stats">
                                 Sin alertas
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <div class="section-header">
-                            <h3 class="section-title">Rendimiento Comercial</h3>
-                            <div class="section-actions">
-                                <button class="btn btn-outline"><i class="fas fa-calendar"></i> Últimos 30 días</button>
-                                <button class="btn btn-primary" id="openAddProductModal"><i class="fas fa-plus"></i> Agregar producto</button>
-                            </div>
-                        </div>
-                        <div class="analytics-grid">
-                            <div class="mini-card">
-                                <h5>Tasa de Conversión</h5>
-                                <div class="progress-wrapper">
-                                    <span>0%</span>
                                     <small class="text-success">0%</small>
                                 </div>
                                 <div class="progress-bar"><div style="width: 0%"></div></div>
