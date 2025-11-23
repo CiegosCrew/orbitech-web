@@ -642,6 +642,42 @@
             border-color: #16a34a;
         }
 
+        /* Tabla de productos */
+        #products-tab table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        #products-tab thead th {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        #products-tab tbody td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        #products-tab tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-row-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-xs {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
         .image-dropzone-previews {
             display: flex;
             flex-wrap: wrap;
@@ -1330,6 +1366,7 @@
                 }
 
                 const newRow = document.createElement('tr');
+                newRow.dataset.id = product.id;
 
                 let cell = newRow.insertCell();
                 cell.textContent = product.id;
@@ -1362,7 +1399,12 @@
                 cell.textContent = product.stock != null ? String(product.stock) : '0';
 
                 cell = newRow.insertCell();
-                cell.textContent = '—';
+                cell.innerHTML = `
+                    <div class="product-row-actions">
+                        <button type="button" class="btn btn-outline btn-xs product-action-edit"><i class="fas fa-pen"></i> Editar</button>
+                        <button type="button" class="btn btn-delete btn-xs product-action-delete"><i class="fas fa-trash"></i> Eliminar</button>
+                    </div>
+                `;
 
                 productsTableBody.appendChild(newRow);
             }
@@ -1371,6 +1413,60 @@
                 const products = loadAdminProducts();
                 if (!products.length) return;
                 products.forEach(renderAdminProductRow);
+            }
+
+            function ensureProductsEmptyRow() {
+                const tbody = document.querySelector('#products-tab table tbody');
+                if (!tbody) return;
+                const hasRows = Array.from(tbody.querySelectorAll('tr')).some(r => r.id !== 'productsEmptyRow');
+                if (!hasRows) {
+                    let emptyRow = document.getElementById('productsEmptyRow');
+                    if (!emptyRow) {
+                        emptyRow = document.createElement('tr');
+                        emptyRow.id = 'productsEmptyRow';
+                        const td = emptyRow.insertCell();
+                        td.colSpan = 7;
+                        td.style.textAlign = 'center';
+                        td.style.color = 'var(--muted-text)';
+                        td.style.padding = '16px';
+                        td.textContent = 'Sin datos disponibles';
+                    }
+                    if (!emptyRow.parentNode) {
+                        tbody.appendChild(emptyRow);
+                    }
+                }
+            }
+
+            function setupProductRowActions() {
+                const tbody = document.querySelector('#products-tab table tbody');
+                if (!tbody) return;
+
+                tbody.addEventListener('click', (e) => {
+                    const editBtn = e.target.closest('.product-action-edit');
+                    const deleteBtn = e.target.closest('.product-action-delete');
+                    if (!editBtn && !deleteBtn) return;
+
+                    e.preventDefault();
+
+                    const row = e.target.closest('tr');
+                    const productId = row && row.dataset.id ? row.dataset.id : '';
+
+                    if (editBtn) {
+                        if (typeof showNotification === 'function') {
+                            showNotification(`Edición de producto ${productId || ''} en desarrollo (demo).`, 'info');
+                        } else {
+                            alert('Función de edición de producto en desarrollo (demo).');
+                        }
+                    }
+
+                    if (deleteBtn) {
+                        if (typeof showNotification === 'function') {
+                            showNotification(`Eliminación de producto ${productId || ''} en desarrollo (demo).`, 'info');
+                        } else {
+                            alert('Función de eliminación de producto en desarrollo (demo).');
+                        }
+                    }
+                });
             }
 
             function openAddProductModal() {
@@ -1404,6 +1500,8 @@
             }
 
             restoreAdminProductsTable();
+            ensureProductsEmptyRow();
+            setupProductRowActions();
 
             // Comportamiento del dropzone de imagen de producto
             if (productImageDropzone && productImageInput) {

@@ -696,25 +696,37 @@ nav a:hover {
     font-size: 1.2rem;
 }
 
-.btn-oferta {
-    display: block;
-    width: calc(100% - 30px);
-    margin: 0 15px 15px;
-    padding: 10px;
-    background: var(--accent);
+.add-to-cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: calc(100% - 40px);
+    margin: 0 20px 20px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
     color: white;
     border: none;
     border-radius: 999px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
     transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.btn-oferta:hover {
-    background: var(--accent-hover);
+.add-to-cart:hover {
+    background: linear-gradient(135deg, var(--accent-hover), var(--accent));
     transform: translateY(-1px);
     box-shadow: 0 8px 22px rgba(15, 23, 42, 0.35);
+}
+
+.add-to-cart i {
+    font-size: 0.95rem;
+}
+
+.product-detail-buy {
+    width: 100%;
+    margin: 0 0 18px 0;
 }
 
 /* Footer */
