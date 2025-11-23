@@ -469,6 +469,7 @@ function initCatalog() {
     const productGrid = document.querySelector('.product-grid');
     const offersGrid = document.querySelector('.ofertas-grid');
     const heroSearchInput = document.querySelector('.hero .search-bar input');
+    const heroSection = document.getElementById('inicio');
     const productsSection = document.getElementById('productos');
     const productDetailSection = document.getElementById('product-detail');
     const detailImage = document.getElementById('detailImage');
@@ -582,6 +583,7 @@ function initCatalog() {
         if (shippingPostalCode) shippingPostalCode.value = '';
         if (shippingResult) shippingResult.textContent = '';
 
+        if (heroSection) heroSection.style.display = 'none';
         productsSection.style.display = 'none';
         productDetailSection.style.display = 'block';
         productDetailSection.scrollIntoView({ behavior: 'smooth' });
@@ -590,6 +592,7 @@ function initCatalog() {
     function closeProductDetail() {
         if (!productDetailSection || !productsSection) return;
         productDetailSection.style.display = 'none';
+        if (heroSection) heroSection.style.display = 'block';
         productsSection.style.display = 'block';
         currentProduct = null;
         if (shippingResult) shippingResult.textContent = '';
