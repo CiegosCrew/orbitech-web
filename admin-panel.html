@@ -816,6 +816,9 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <div class="admin-header-right">
+                        <button id="themeToggle" class="theme-toggle" aria-label="Cambiar tema">
+                            <i class="fas fa-moon"></i>
+                        </button>
                         <div class="admin-user">
                             <img src="https://ui-avatars.com/api/?name=Cristian+Benegas&background=3498db&color=fff" alt="Admin">
                             <div class="user-info">
@@ -1269,9 +1272,6 @@
     <script>
         // Verificar autenticación y aplicar tema
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof initTheme === 'function') {
-                initTheme();
-            }
             // Verificar si el usuario está autenticado
             if (!sessionStorage.getItem('adminAuthenticated')) {
                 window.location.href = 'admin-login.html';
@@ -1516,6 +1516,35 @@
                         }
                     }
                 });
+
+                tbody.addEventListener('change', (e) => {
+                    const stockField = e.target.closest('.stock-inline-input');
+                    if (!stockField) return;
+
+                    const productId = stockField.dataset.id;
+                    if (!productId) return;
+
+                    const rawValue = stockField.value;
+                    let newStock = parseInt(rawValue, 10);
+                    if (isNaN(newStock) || newStock < 0) {
+                        newStock = 0;
+                        stockField.value = '0';
+                    }
+
+                    const products = loadAdminProducts();
+                    const updated = products.map(p => {
+                        if (p.id === productId) {
+                            return Object.assign({}, p, { stock: newStock });
+                        }
+                        return p;
+                    });
+
+                    saveAdminProducts(updated);
+
+                    if (typeof showNotification === 'function') {
+                        showNotification('Stock actualizado (demo).', 'success');
+                    }
+                });
             }
 
             function openAddProductModal() {
@@ -1543,6 +1572,11 @@
                 if (typeof resetProductDropzoneUI === 'function') {
                     resetProductDropzoneUI();
                 }
+
+                const categoryInput = document.getElementById('productCategory');
+                const stockInput = document.getElementById('productStock');
+                if (categoryInput) categoryInput.value = 'otros';
+                if (stockInput) stockInput.value = '0';
             }
 
             function openEditProductModal(productId) {
@@ -1568,10 +1602,14 @@
                 const titleInput = document.getElementById('productTitle');
                 const descInput = document.getElementById('productDescription');
                 const priceInput = document.getElementById('productPrice');
+                const categoryInput = document.getElementById('productCategory');
+                const stockInput = document.getElementById('productStock');
 
                 if (titleInput) titleInput.value = product.name || '';
                 if (descInput) descInput.value = product.description || '';
                 if (priceInput) priceInput.value = product.price != null ? product.price : '';
+                if (categoryInput) categoryInput.value = product.category || 'otros';
+                if (stockInput) stockInput.value = product.stock != null ? String(product.stock) : '0';
 
                 if (productImagePreviews && product.image) {
                     productImagePreviews.innerHTML = '';
