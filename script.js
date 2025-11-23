@@ -481,6 +481,10 @@ function initCatalog() {
     const shippingPostalCode = document.getElementById('shippingPostalCode');
     const calculateShippingBtn = document.getElementById('calculateShippingBtn');
     const shippingResult = document.getElementById('shippingResult');
+    const imageLightbox = document.getElementById('imageLightbox');
+    const imageLightboxImg = document.getElementById('imageLightboxImg');
+    const imageLightboxClose = imageLightbox ? imageLightbox.querySelector('.image-lightbox-close') : null;
+    const imageLightboxBackdrop = imageLightbox ? imageLightbox.querySelector('.image-lightbox-backdrop') : null;
 
     if (!productGrid) return;
 
@@ -628,6 +632,23 @@ function initCatalog() {
         if (shippingResult) shippingResult.textContent = '';
     }
 
+    function openImageLightbox(src, altText) {
+        if (!imageLightbox || !imageLightboxImg || !src) return;
+        imageLightboxImg.src = src;
+        imageLightboxImg.alt = altText || '';
+        imageLightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeImageLightbox() {
+        if (!imageLightbox) return;
+        imageLightbox.classList.remove('active');
+        if (imageLightboxImg) {
+            imageLightboxImg.src = '';
+        }
+        document.body.style.overflow = '';
+    }
+
     function setupShippingCalculator() {
         if (!calculateShippingBtn || !shippingPostalCode || !shippingResult) return;
 
@@ -706,6 +727,15 @@ function initCatalog() {
                 </div>
             `;
 
+            const cardImage = card.querySelector('img');
+            if (cardImage) {
+                cardImage.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!cardImage.src) return;
+                    openImageLightbox(cardImage.src, cardImage.alt || product.name);
+                });
+            }
+
             card.addEventListener('click', () => openProductDetail(product.id));
             productGrid.appendChild(card);
         });
@@ -726,6 +756,14 @@ function initCatalog() {
                 <p class="price" data-price="${offer.price}">$${offer.price.toFixed(2)}</p>
                 <button class="btn-oferta">Añadir al carrito</button>
             `;
+            const offerImg = card.querySelector('img');
+            if (offerImg) {
+                offerImg.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!offerImg.src) return;
+                    openImageLightbox(offerImg.src, offerImg.alt || offer.name);
+                });
+            }
             offersGrid.appendChild(card);
         });
     }
@@ -787,6 +825,32 @@ function initCatalog() {
     }
 
     setupShippingCalculator();
+
+    if (imageLightboxClose) {
+        imageLightboxClose.addEventListener('click', () => {
+            closeImageLightbox();
+        });
+    }
+
+    if (imageLightboxBackdrop) {
+        imageLightboxBackdrop.addEventListener('click', () => {
+            closeImageLightbox();
+        });
+    }
+
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'Escape') {
+            closeImageLightbox();
+        }
+    });
+
+    if (detailImage) {
+        detailImage.addEventListener('click', () => {
+            if (!detailImage.src) return;
+            const alt = detailTitle ? detailTitle.textContent : (detailImage.alt || 'Producto');
+            openImageLightbox(detailImage.src, alt);
+        });
+    }
 }
 
 // Inicializar carrito

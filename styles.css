@@ -449,8 +449,9 @@ nav a:hover {
 .product-detail-media img {
     width: 100%;
     max-height: 360px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 14px;
+    background: #000;
 }
 
 .product-detail-content h2 {
@@ -974,6 +975,67 @@ footer {
 .overlay.active {
     opacity: 1;
     visibility: visible;
+}
+
+.image-lightbox {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+}
+
+.image-lightbox.active {
+    display: flex;
+}
+
+.image-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.image-lightbox-content {
+    position: relative;
+    z-index: 1;
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-lightbox-content img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.image-lightbox-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(15, 23, 42, 0.8);
+    color: #f9fafb;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-lightbox-close:hover {
+    background: rgba(15, 23, 42, 1);
 }
 
 /* Responsive */
