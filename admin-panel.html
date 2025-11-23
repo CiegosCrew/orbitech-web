@@ -642,6 +642,35 @@
             border-color: #16a34a;
         }
 
+        .image-dropzone-previews {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 4px;
+        }
+
+        .image-dropzone-preview {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+        }
+
+        .image-dropzone-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-dropzone.has-previews .image-dropzone-title,
+        .image-dropzone.has-previews .image-dropzone-subtitle {
+            display: none;
+        }
+
         /* Modales admin */
         #addProductModal,
         #reportModal,
@@ -1089,6 +1118,7 @@
                         <div class="image-dropzone-icon"><i class="fas fa-plus"></i></div>
                         <p class="image-dropzone-title">Podés arrastrar y soltar las fotos, o elegirlas desde tu dispositivo</p>
                         <p class="image-dropzone-subtitle">Cargá como máximo 6 fotos (de hasta 10 MB cada una) con formato JPG, PNG, JPEG o WEBP.</p>
+                        <div class="image-dropzone-previews" id="productImagePreviews"></div>
                         <button type="button" class="btn btn-outline image-dropzone-button">Elegir archivos</button>
                         <input type="file" id="productImage" class="form-control" accept="image/*" required multiple>
                     </div>
@@ -1261,10 +1291,87 @@
             const productImageDropzone = document.getElementById('productImageDropzone');
             const productImageInput = document.getElementById('productImage');
             const productImageHint = document.getElementById('productImageHint');
+            const productImagePreviews = document.getElementById('productImagePreviews');
+            let resetProductDropzoneUI = null;
 
             // Aumento masivo de precios
             const massPriceInput = document.getElementById('massPricePercentage');
             const massPriceBtn = document.getElementById('applyMassPriceIncrease');
+
+            const ADMIN_PRODUCTS_KEY = 'orbitech-admin-products';
+
+            function loadAdminProducts() {
+                try {
+                    const raw = localStorage.getItem(ADMIN_PRODUCTS_KEY);
+                    if (!raw) return [];
+                    const parsed = JSON.parse(raw);
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (e) {
+                    console.error('Error al cargar productos del admin:', e);
+                    return [];
+                }
+            }
+
+            function saveAdminProducts(list) {
+                try {
+                    localStorage.setItem(ADMIN_PRODUCTS_KEY, JSON.stringify(list));
+                } catch (e) {
+                    console.error('Error al guardar productos del admin:', e);
+                }
+            }
+
+            function renderAdminProductRow(product) {
+                const productsTableBody = document.querySelector('#products-tab table tbody');
+                if (!productsTableBody || !product) return;
+
+                const emptyRow = document.getElementById('productsEmptyRow');
+                if (emptyRow && emptyRow.parentNode === productsTableBody) {
+                    productsTableBody.removeChild(emptyRow);
+                }
+
+                const newRow = document.createElement('tr');
+
+                let cell = newRow.insertCell();
+                cell.textContent = product.id;
+
+                cell = newRow.insertCell();
+                if (product.image) {
+                    const img = document.createElement('img');
+                    img.src = product.image;
+                    img.alt = product.name || 'Producto';
+                    img.style.width = '40px';
+                    img.style.height = '40px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '6px';
+                    cell.appendChild(img);
+                } else {
+                    cell.textContent = '—';
+                }
+
+                cell = newRow.insertCell();
+                cell.textContent = product.name || '';
+
+                cell = newRow.insertCell();
+                cell.textContent = product.category || 'Sin categoría';
+
+                cell = newRow.insertCell();
+                const priceNumber = parseFloat(product.price) || 0;
+                cell.textContent = '$' + priceNumber.toFixed(2);
+
+                cell = newRow.insertCell();
+                cell.textContent = product.stock != null ? String(product.stock) : '0';
+
+                cell = newRow.insertCell();
+                cell.textContent = '—';
+
+                productsTableBody.appendChild(newRow);
+            }
+
+            function restoreAdminProductsTable() {
+                const products = loadAdminProducts();
+                if (!products.length) return;
+                products.forEach(renderAdminProductRow);
+            }
 
             function openAddProductModal() {
                 if (!addProductModal) return;
@@ -1296,6 +1403,8 @@
                 campaignModal.classList.remove('active');
             }
 
+            restoreAdminProductsTable();
+
             // Comportamiento del dropzone de imagen de producto
             if (productImageDropzone && productImageInput) {
                 const maxFiles = 6;
@@ -1307,6 +1416,10 @@
                     const files = Array.from(productImageInput.files || []);
                     if (!files.length) {
                         productImageHint.textContent = 'Ningún archivo seleccionado.';
+                        if (productImagePreviews) {
+                            productImagePreviews.innerHTML = '';
+                        }
+                        productImageDropzone.classList.remove('has-previews');
                         return;
                     }
                     if (files.length === 1) {
@@ -1314,7 +1427,52 @@
                     } else {
                         productImageHint.textContent = `${files.length} archivos seleccionados.`;
                     }
+
+                    renderPreviews(files);
                 }
+
+                function renderPreviews(files) {
+                    if (!productImagePreviews) return;
+                    productImagePreviews.innerHTML = '';
+
+                    if (!files.length) {
+                        productImageDropzone.classList.remove('has-previews');
+                        return;
+                    }
+
+                    productImageDropzone.classList.add('has-previews');
+
+                    files.slice(0, maxFiles).forEach(file => {
+                        const preview = document.createElement('div');
+                        preview.className = 'image-dropzone-preview';
+
+                        const img = document.createElement('img');
+                        img.alt = file.name;
+                        preview.appendChild(img);
+                        productImagePreviews.appendChild(preview);
+
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            img.src = ev.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                resetProductDropzoneUI = function () {
+                    if (productImageInput) {
+                        productImageInput.value = '';
+                    }
+                    if (productImagePreviews) {
+                        productImagePreviews.innerHTML = '';
+                    }
+                    if (productImageDropzone) {
+                        productImageDropzone.classList.remove('has-previews');
+                    }
+                    if (productImageHint) {
+                        productImageHint.textContent = 'Ningún archivo seleccionado.';
+                    }
+                };
 
                 function setFiles(validFiles) {
                     const dt = new DataTransfer();
@@ -1438,8 +1596,17 @@
                 });
             }
 
+            function readFileAsDataURL(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = () => reject(reader.error || new Error('Error al leer archivo'));
+                    reader.readAsDataURL(file);
+                });
+            }
+
             if (addProductForm) {
-                addProductForm.addEventListener('submit', (e) => {
+                addProductForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
 
                     const imageInput = document.getElementById('productImage');
@@ -1458,57 +1625,47 @@
                         return;
                     }
 
-                    const productsTableBody = document.querySelector('#products-tab table tbody');
-                    if (productsTableBody) {
-                        const emptyRow = document.getElementById('productsEmptyRow');
-                        if (emptyRow && emptyRow.parentNode === productsTableBody) {
-                            productsTableBody.removeChild(emptyRow);
+                    const productId = 'P-' + Date.now().toString().slice(-6);
+                    const file = imageInput.files[0];
+                    let imageDataUrl = '';
+
+                    if (file) {
+                        try {
+                            imageDataUrl = await readFileAsDataURL(file);
+                        } catch (error) {
+                            console.error('Error al leer la imagen del producto:', error);
                         }
-
-                        const newRow = document.createElement('tr');
-                        const productId = 'P-' + Date.now().toString().slice(-6);
-                        const file = imageInput.files[0];
-                        const imageUrl = URL.createObjectURL(file);
-
-                        let cell = newRow.insertCell();
-                        cell.textContent = productId;
-
-                        cell = newRow.insertCell();
-                        const img = document.createElement('img');
-                        img.src = imageUrl;
-                        img.alt = titleInput.value || 'Producto';
-                        img.style.width = '40px';
-                        img.style.height = '40px';
-                        img.style.objectFit = 'cover';
-                        img.style.borderRadius = '6px';
-                        cell.appendChild(img);
-
-                        cell = newRow.insertCell();
-                        cell.textContent = titleInput.value;
-
-                        cell = newRow.insertCell();
-                        cell.textContent = 'Sin categoría';
-
-                        cell = newRow.insertCell();
-                        const priceValue = parseFloat(priceInput.value) || 0;
-                        cell.textContent = '$' + priceValue.toFixed(2);
-
-                        cell = newRow.insertCell();
-                        cell.textContent = '0';
-
-                        cell = newRow.insertCell();
-                        cell.textContent = '—';
-
-                        productsTableBody.appendChild(newRow);
                     }
 
+                    const priceValue = parseFloat(priceInput.value) || 0;
+
+                    const productData = {
+                        id: productId,
+                        name: titleInput.value.trim(),
+                        description: descInput.value.trim(),
+                        price: priceValue,
+                        image: imageDataUrl,
+                        category: 'otros',
+                        stock: 0,
+                        badge: 'Nuevo'
+                    };
+
+                    renderAdminProductRow(productData);
+
+                    const existing = loadAdminProducts();
+                    existing.push(productData);
+                    saveAdminProducts(existing);
+
                     if (typeof showNotification === 'function') {
-                        showNotification('Producto registrado (demo). Falta conectar con la base de datos.', 'success');
+                        showNotification('Producto guardado y vinculado al catálogo (demo).', 'success');
                     } else {
-                        alert('Producto registrado (demo).');
+                        alert('Producto guardado.');
                     }
 
                     addProductForm.reset();
+                    if (typeof resetProductDropzoneUI === 'function') {
+                        resetProductDropzoneUI();
+                    }
                     closeAddProductModal();
                 });
             }

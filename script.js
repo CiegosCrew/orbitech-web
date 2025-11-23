@@ -472,8 +472,7 @@ function initCatalog() {
 
     if (!productGrid) return;
 
-    // Catálogo de ejemplo (puedes ajustar nombres, precios y categorías más adelante)
-    const products = [
+    const baseProducts = [
         {
             id: 'prod-1',
             name: 'Notebook Gamer 15"',
@@ -511,6 +510,42 @@ function initCatalog() {
             badge: 'Recomendado'
         }
     ];
+
+    let products = baseProducts.slice();
+
+    const ADMIN_PRODUCTS_KEY = 'orbitech-admin-products';
+
+    function loadAdminProductsForStore() {
+        try {
+            const raw = localStorage.getItem(ADMIN_PRODUCTS_KEY);
+            if (!raw) return [];
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function refreshProductsFromAdmin() {
+        const adminList = loadAdminProductsForStore();
+        products = baseProducts.slice();
+
+        if (adminList && adminList.length) {
+            const mapped = adminList.map((p, index) => {
+                const priceNumber = parseFloat(p.price);
+                return {
+                    id: p.id || `admin-${index}-${Date.now()}`,
+                    name: p.name || 'Producto',
+                    description: p.description || '',
+                    price: isNaN(priceNumber) ? 0 : priceNumber,
+                    image: p.image || 'https://via.placeholder.com/400x250?text=Producto',
+                    category: p.category || 'otros',
+                    badge: p.badge || 'Nuevo'
+                };
+            });
+            products = products.concat(mapped);
+        }
+    }
 
     const offers = [
         {
@@ -594,6 +629,8 @@ function initCatalog() {
             offersGrid.appendChild(card);
         });
     }
+
+    refreshProductsFromAdmin();
 
     // Render inicial
     renderProducts();
