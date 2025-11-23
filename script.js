@@ -765,6 +765,15 @@ function initCatalog() {
     renderProducts();
     renderOffers();
 
+    // Escuchar cambios en localStorage para sincronizar productos del admin
+    window.addEventListener('storage', (e) => {
+        if (e.key === ADMIN_PRODUCTS_KEY) {
+            refreshProductsFromAdmin();
+            const currentSearch = heroSearchInput ? heroSearchInput.value : '';
+            renderProducts(currentSearch);
+        }
+    });
+
     // Filtros por categoría
     const filterChips = document.querySelectorAll('.product-filters .filter-chip');
     if (filterChips.length) {
