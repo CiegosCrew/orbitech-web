@@ -640,12 +640,6 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <div class="admin-header-right">
-                        <div class="header-icons">
-                            <button class="icon-btn" id="notificationsBtn">
-                                <i class="fas fa-bell"></i>
-                                <span class="badge">3</span>
-                            </button>
-                        </div>
                         <div class="admin-user">
                             <img src="https://ui-avatars.com/api/?name=Cristian+Benegas&background=3498db&color=fff" alt="Admin">
                             <div class="user-info">
@@ -1118,6 +1112,7 @@
 
             // Modal Agregar producto
             const addProductBtn = document.getElementById('openAddProductModal');
+            const addProductButtons = document.querySelectorAll('[data-open-add-product="true"]');
             const addProductModal = document.getElementById('addProductModal');
             const addProductForm = document.getElementById('addProductForm');
             const cancelAddProduct = document.getElementById('cancelAddProduct');
@@ -1170,6 +1165,15 @@
                 });
             }
 
+            if (addProductButtons.length && addProductModal) {
+                addProductButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openAddProductModal();
+                    });
+                });
+            }
+
             if (addProductClose) {
                 addProductClose.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -1210,6 +1214,50 @@
                             alert('Completa todos los campos del producto.');
                         }
                         return;
+                    }
+
+                    const productsTableBody = document.querySelector('#products-tab table tbody');
+                    if (productsTableBody) {
+                        const emptyRow = document.getElementById('productsEmptyRow');
+                        if (emptyRow && emptyRow.parentNode === productsTableBody) {
+                            productsTableBody.removeChild(emptyRow);
+                        }
+
+                        const newRow = document.createElement('tr');
+                        const productId = 'P-' + Date.now().toString().slice(-6);
+                        const file = imageInput.files[0];
+                        const imageUrl = URL.createObjectURL(file);
+
+                        let cell = newRow.insertCell();
+                        cell.textContent = productId;
+
+                        cell = newRow.insertCell();
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = titleInput.value || 'Producto';
+                        img.style.width = '40px';
+                        img.style.height = '40px';
+                        img.style.objectFit = 'cover';
+                        img.style.borderRadius = '6px';
+                        cell.appendChild(img);
+
+                        cell = newRow.insertCell();
+                        cell.textContent = titleInput.value;
+
+                        cell = newRow.insertCell();
+                        cell.textContent = 'Sin categoría';
+
+                        cell = newRow.insertCell();
+                        const priceValue = parseFloat(priceInput.value) || 0;
+                        cell.textContent = '$' + priceValue.toFixed(2);
+
+                        cell = newRow.insertCell();
+                        cell.textContent = '0';
+
+                        cell = newRow.insertCell();
+                        cell.textContent = '—';
+
+                        productsTableBody.appendChild(newRow);
                     }
 
                     if (typeof showNotification === 'function') {
