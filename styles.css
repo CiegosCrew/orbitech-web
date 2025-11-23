@@ -186,8 +186,8 @@ nav a:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover;
-    opacity: 0.1;
+    background: url('https://images.unsplash.com/photo-1511963211055-1adbe445edf0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover;
+    opacity: 0.16;
     z-index: 1;
 }
 

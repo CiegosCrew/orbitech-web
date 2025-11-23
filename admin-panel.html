@@ -678,6 +678,14 @@
             font-size: 12px;
         }
 
+        .stock-inline-input {
+            width: 80px;
+            padding: 6px 8px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
         .image-dropzone-previews {
             display: flex;
             flex-wrap: wrap;
@@ -1172,6 +1180,26 @@
                     <label for="productPrice">Precio</label>
                     <input type="number" id="productPrice" class="form-control" min="0" step="0.01" required>
                 </div>
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="productCategory">Categoría</label>
+                            <select id="productCategory" class="form-control">
+                                <option value="laptops">Laptops</option>
+                                <option value="audio">Audio</option>
+                                <option value="monitores">Monitores</option>
+                                <option value="sillas">Sillas gamer</option>
+                                <option value="otros" selected>Otros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="productStock">Stock</label>
+                            <input type="number" id="productStock" class="form-control" min="0" step="1" value="0">
+                        </div>
+                    </div>
+                </div>
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" id="cancelAddProduct">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Guardar producto</button>
@@ -1397,7 +1425,14 @@
                 cell.textContent = '$' + priceNumber.toFixed(2);
 
                 cell = newRow.insertCell();
-                cell.textContent = product.stock != null ? String(product.stock) : '0';
+                const stockInput = document.createElement('input');
+                stockInput.type = 'number';
+                stockInput.min = '0';
+                stockInput.step = '1';
+                stockInput.className = 'stock-inline-input';
+                stockInput.value = product.stock != null ? String(product.stock) : '0';
+                stockInput.dataset.id = product.id;
+                cell.appendChild(stockInput);
 
                 cell = newRow.insertCell();
                 cell.innerHTML = `
@@ -1789,6 +1824,8 @@
                     const titleInput = document.getElementById('productTitle');
                     const descInput = document.getElementById('productDescription');
                     const priceInput = document.getElementById('productPrice');
+                    const categoryInput = document.getElementById('productCategory');
+                    const stockInput = document.getElementById('productStock');
 
                     if (!imageInput || !titleInput || !descInput || !priceInput) return;
 
@@ -1821,6 +1858,13 @@
                     }
 
                     const priceValue = parseFloat(priceInput.value) || 0;
+                    const categoryValue = (categoryInput && categoryInput.value) || (baseProduct && baseProduct.category) || 'otros';
+
+                    let stockValue = baseProduct && baseProduct.stock != null ? baseProduct.stock : 0;
+                    if (stockInput && stockInput.value !== '') {
+                        const parsed = parseInt(stockInput.value, 10);
+                        stockValue = isNaN(parsed) || parsed < 0 ? 0 : parsed;
+                    }
 
                     const productData = {
                         id: productId,
@@ -1828,8 +1872,8 @@
                         description: descInput.value.trim(),
                         price: priceValue,
                         image: imageDataUrl,
-                        category: (baseProduct && baseProduct.category) || 'otros',
-                        stock: baseProduct && baseProduct.stock != null ? baseProduct.stock : 0,
+                        category: categoryValue,
+                        stock: stockValue,
                         badge: (baseProduct && baseProduct.badge) || 'Nuevo'
                     };
 
@@ -1988,6 +2032,29 @@
                         return;
                     }
 
+                    const factor = 1 + (value / 100);
+
+                    rows.forEach(row => {
+                        const priceCell = row.querySelector('td:nth-child(5)');
+                        if (!priceCell) return;
+                        const text = priceCell.textContent || '';
+                        const numeric = parseFloat(text.replace(/[^0-9.,]/g, '').replace(',', '.'));
+                        if (isNaN(numeric)) return;
+                        const newPrice = numeric * factor;
+                        priceCell.textContent = '$' + newPrice.toFixed(2);
+                    });
+
+                    if (typeof showNotification === 'function') {
+                        showNotification('Precios actualizados en la tabla (demo).', 'success');
+                    } else {
+                        alert('Precios actualizados en la tabla (demo).');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
                     const factor = 1 + (value / 100);
 
                     rows.forEach(row => {
