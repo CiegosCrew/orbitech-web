@@ -1335,6 +1335,7 @@
             const massPriceBtn = document.getElementById('applyMassPriceIncrease');
 
             const ADMIN_PRODUCTS_KEY = 'orbitech-admin-products';
+            let editingProductId = null;
 
             function loadAdminProducts() {
                 try {
@@ -1452,18 +1453,31 @@
                     const productId = row && row.dataset.id ? row.dataset.id : '';
 
                     if (editBtn) {
-                        if (typeof showNotification === 'function') {
-                            showNotification(`Edición de producto ${productId || ''} en desarrollo (demo).`, 'info');
-                        } else {
-                            alert('Función de edición de producto en desarrollo (demo).');
-                        }
+                        if (!productId) return;
+                        openEditProductModal(productId);
+                        return;
                     }
 
                     if (deleteBtn) {
+                        if (!productId) return;
+
+                        const confirmed = window.confirm('¿Seguro que querés eliminar este producto?');
+                        if (!confirmed) return;
+
+                        const products = loadAdminProducts();
+                        const updated = products.filter(p => p.id !== productId);
+                        saveAdminProducts(updated);
+
+                        if (row && row.parentNode) {
+                            row.parentNode.removeChild(row);
+                        }
+
+                        ensureProductsEmptyRow();
+
                         if (typeof showNotification === 'function') {
-                            showNotification(`Eliminación de producto ${productId || ''} en desarrollo (demo).`, 'info');
+                            showNotification('Producto eliminado (demo).', 'success');
                         } else {
-                            alert('Función de eliminación de producto en desarrollo (demo).');
+                            alert('Producto eliminado (demo).');
                         }
                     }
                 });
@@ -1477,6 +1491,68 @@
             function closeAddProductModal() {
                 if (!addProductModal) return;
                 addProductModal.classList.remove('active');
+            }
+
+            function configureProductModalForCreate() {
+                editingProductId = null;
+
+                if (!addProductModal || !addProductForm) return;
+
+                const headerTitle = addProductModal.querySelector('.add-product-dialog-header h3');
+                const submitBtn = addProductModal.querySelector('.modal-actions button[type="submit"]');
+
+                if (headerTitle) headerTitle.textContent = 'Agregar producto';
+                if (submitBtn) submitBtn.textContent = 'Guardar producto';
+
+                addProductForm.reset();
+                if (typeof resetProductDropzoneUI === 'function') {
+                    resetProductDropzoneUI();
+                }
+            }
+
+            function openEditProductModal(productId) {
+                if (!addProductModal || !addProductForm) return;
+
+                const products = loadAdminProducts();
+                const product = products.find(p => p.id === productId);
+                if (!product) return;
+
+                editingProductId = productId;
+
+                const headerTitle = addProductModal.querySelector('.add-product-dialog-header h3');
+                const submitBtn = addProductModal.querySelector('.modal-actions button[type="submit"]');
+
+                if (headerTitle) headerTitle.textContent = 'Editar producto';
+                if (submitBtn) submitBtn.textContent = 'Guardar cambios';
+
+                addProductForm.reset();
+                if (typeof resetProductDropzoneUI === 'function') {
+                    resetProductDropzoneUI();
+                }
+
+                const titleInput = document.getElementById('productTitle');
+                const descInput = document.getElementById('productDescription');
+                const priceInput = document.getElementById('productPrice');
+
+                if (titleInput) titleInput.value = product.name || '';
+                if (descInput) descInput.value = product.description || '';
+                if (priceInput) priceInput.value = product.price != null ? product.price : '';
+
+                if (productImagePreviews && product.image) {
+                    productImagePreviews.innerHTML = '';
+                    const preview = document.createElement('div');
+                    preview.className = 'image-dropzone-preview';
+                    const img = document.createElement('img');
+                    img.src = product.image;
+                    img.alt = product.name || 'Producto';
+                    preview.appendChild(img);
+                    productImagePreviews.appendChild(preview);
+                    if (productImageDropzone) {
+                        productImageDropzone.classList.add('has-previews');
+                    }
+                }
+
+                addProductModal.classList.add('active');
             }
 
             function openReportModal() {
@@ -1659,6 +1735,7 @@
             if (addProductBtn && addProductModal) {
                 addProductBtn.addEventListener('click', (e) => {
                     e.preventDefault();
+                    configureProductModalForCreate();
                     openAddProductModal();
                 });
             }
@@ -1667,6 +1744,7 @@
                 addProductButtons.forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.preventDefault();
+                        configureProductModalForCreate();
                         openAddProductModal();
                     });
                 });
@@ -1714,7 +1792,9 @@
 
                     if (!imageInput || !titleInput || !descInput || !priceInput) return;
 
-                    if (!imageInput.files.length || !titleInput.value.trim() || !descInput.value.trim() || !priceInput.value.trim()) {
+                    const isEdit = !!editingProductId;
+
+                    if (!titleInput.value.trim() || !descInput.value.trim() || !priceInput.value.trim() || (!isEdit && !imageInput.files.length)) {
                         if (typeof showNotification === 'function') {
                             showNotification('Completa todos los campos del producto.', 'error');
                         } else {
@@ -1723,7 +1803,10 @@
                         return;
                     }
 
-                    const productId = 'P-' + Date.now().toString().slice(-6);
+                    const products = loadAdminProducts();
+                    const baseProduct = isEdit ? (products.find(p => p.id === editingProductId) || null) : null;
+
+                    const productId = isEdit ? editingProductId : ('P-' + Date.now().toString().slice(-6));
                     const file = imageInput.files[0];
                     let imageDataUrl = '';
 
@@ -1733,6 +1816,8 @@
                         } catch (error) {
                             console.error('Error al leer la imagen del producto:', error);
                         }
+                    } else if (isEdit && baseProduct && baseProduct.image) {
+                        imageDataUrl = baseProduct.image;
                     }
 
                     const priceValue = parseFloat(priceInput.value) || 0;
@@ -1743,27 +1828,40 @@
                         description: descInput.value.trim(),
                         price: priceValue,
                         image: imageDataUrl,
-                        category: 'otros',
-                        stock: 0,
-                        badge: 'Nuevo'
+                        category: (baseProduct && baseProduct.category) || 'otros',
+                        stock: baseProduct && baseProduct.stock != null ? baseProduct.stock : 0,
+                        badge: (baseProduct && baseProduct.badge) || 'Nuevo'
                     };
 
-                    renderAdminProductRow(productData);
+                    let updated;
+                    if (isEdit) {
+                        updated = products.map(p => p.id === productId ? productData : p);
+                    } else {
+                        updated = products.concat(productData);
+                    }
 
-                    const existing = loadAdminProducts();
-                    existing.push(productData);
-                    saveAdminProducts(existing);
+                    saveAdminProducts(updated);
+
+                    const tbody = document.querySelector('#products-tab table tbody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                    }
+
+                    restoreAdminProductsTable();
+                    ensureProductsEmptyRow();
 
                     if (typeof showNotification === 'function') {
-                        showNotification('Producto guardado y vinculado al catálogo (demo).', 'success');
+                        showNotification(isEdit ? 'Producto actualizado (demo).' : 'Producto guardado y vinculado al catálogo (demo).', 'success');
                     } else {
-                        alert('Producto guardado.');
+                        alert(isEdit ? 'Producto actualizado (demo).' : 'Producto guardado.');
                     }
 
                     addProductForm.reset();
                     if (typeof resetProductDropzoneUI === 'function') {
                         resetProductDropzoneUI();
                     }
+
+                    editingProductId = null;
                     closeAddProductModal();
                 });
             }
