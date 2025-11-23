@@ -772,6 +772,32 @@
             }
         }
 
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                z-index: 2000;
+            }
+
+            .admin-sidebar.active {
+                transform: translateX(0);
+            }
+
+            .admin-main {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .admin-header {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-header-actions {
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+        }
+
     </style>
 </head>
 <body>
