@@ -530,6 +530,7 @@ function initCatalog() {
     const offersGrid = document.querySelector('.ofertas-grid');
     const heroSearchInput = document.querySelector('.hero .search-bar input');
     const heroSearchButton = document.querySelector('.hero .search-bar button');
+    const homeCategoryCards = document.querySelectorAll('.home-category-card');
     const heroSection = document.getElementById('inicio');
     const productsSection = document.getElementById('productos');
     const productDetailSection = document.getElementById('product-detail');
@@ -827,12 +828,18 @@ function initCatalog() {
     if (heroSearchInput) {
         // Filtrar mientras se escribe
         heroSearchInput.addEventListener('input', () => {
+            if (homeCategoryCards && homeCategoryCards.length) {
+                homeCategoryCards.forEach(card => card.classList.remove('active'));
+            }
             renderProducts(heroSearchInput.value);
         });
 
         // Permitir presionar Enter para buscar
         heroSearchInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') {
+                if (homeCategoryCards && homeCategoryCards.length) {
+                    homeCategoryCards.forEach(card => card.classList.remove('active'));
+                }
                 renderProducts(heroSearchInput.value);
             }
         });
@@ -842,7 +849,31 @@ function initCatalog() {
     if (heroSearchButton && heroSearchInput) {
         heroSearchButton.addEventListener('click', (e) => {
             e.preventDefault();
+            if (homeCategoryCards && homeCategoryCards.length) {
+                homeCategoryCards.forEach(card => card.classList.remove('active'));
+            }
             renderProducts(heroSearchInput.value);
+        });
+    }
+
+    // Franja de categorías de la home
+    if (homeCategoryCards && homeCategoryCards.length) {
+        homeCategoryCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const term = card.dataset.term || '';
+                if (heroSearchInput) {
+                    heroSearchInput.value = term;
+                }
+
+                homeCategoryCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+
+                renderProducts(term);
+
+                if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
         });
     }
 
